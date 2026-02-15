@@ -12,7 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.io.File;
 
 @SpringBootApplication
 @MapperScan("com.example.springboot.mapper")
@@ -44,6 +47,15 @@ public class SpringbootApplication {
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
+
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                // 使用绝对路径
+                String basePath = "d:/IdeaProjects/travel/springboot/files/";
+                // 配置 /img/** 映射
+                registry.addResourceHandler("/img/**")
+                        .addResourceLocations("file:" + basePath + "img/");
+            }
         };
     }
 
@@ -52,7 +64,7 @@ public class SpringbootApplication {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/current", "/user/logout", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/user/login", "/user/current", "/user/logout", "/user/add", "/img/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll()
                 );
         return http.build();

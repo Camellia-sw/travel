@@ -7,7 +7,7 @@
           <!-- Logo区域 -->
           <div class="navbar-left">
             <router-link to="/" class="navbar-logo">
-              <i class="fas fa-plane-departure"></i>
+              <el-icon class="logo-icon"><Promotion /></el-icon>
               <span>旅游推荐系统</span>
             </router-link>
 
@@ -28,24 +28,38 @@
               <el-dropdown trigger="click" @command="handleCommand">
                 <div class="user-avatar-btn">
                   <!-- 显示真实头像或默认图标 -->
-                  <img
-                      v-if="userStore.userInfo?.avatar"
-                      :src="getImageUrl(userStore.userInfo.avatar)"
-                      alt="用户头像"
-                      class="user-avatar-img"
+                  <el-avatar
+                      :size="32"
+                      :src="avatarUrl"
                       @error="handleImageError"
-                  />
-                  <i v-else class="fas fa-user-circle"></i>
+                  >
+                    <el-icon><User /></el-icon>
+                  </el-avatar>
                   <span class="username">{{ userStore.userInfo?.username || '用户' }}</span>
                 </div>
 
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item command="profile" icon="User">个人中心</el-dropdown-item>
-                    <el-dropdown-item command="guide" icon="Notebook">我的攻略</el-dropdown-item>
-                    <el-dropdown-item command="collection" icon="Star">我的收藏</el-dropdown-item>
-                    <el-dropdown-item command="orders" icon="Ticket">我的订单</el-dropdown-item>
-                    <el-dropdown-item divided command="logout" icon="SwitchButton">退出登录</el-dropdown-item>
+                    <el-dropdown-item command="profile">
+                      <el-icon><User /></el-icon>
+                      个人中心
+                    </el-dropdown-item>
+                    <el-dropdown-item command="guide">
+                      <el-icon><Notebook /></el-icon>
+                      我的攻略
+                    </el-dropdown-item>
+                    <el-dropdown-item command="collection">
+                      <el-icon><Star /></el-icon>
+                      我的收藏
+                    </el-dropdown-item>
+                    <el-dropdown-item command="orders">
+                      <el-icon><Ticket /></el-icon>
+                      我的订单
+                    </el-dropdown-item>
+                    <el-dropdown-item divided command="logout">
+                      <el-icon><SwitchButton /></el-icon>
+                      退出登录
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -65,53 +79,53 @@
     <main class="main-content">
       <router-view />
     </main>
-    <!-- 底部,仅保留版权信息   -->
-    <footer class="footer" style="text-align: center;">
-      <div class="footer-content">
-        <p>半夜撕代码 © 2025 旅游推荐系统. 保留所有权利.</p>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup>
-// import { computed } from 'vue'
-// import { useUserStore } from '@/store/user'
-// import { useRouter } from 'vue-router'
-//
-// const userStore = useUserStore()
-// const router = useRouter()
-//
-// const isLoggedIn = computed(() => !!userStore.token)
-//
-// // 获取后端API基础地址
-// const baseAPI = process.env.VUE_APP_BASE_API || '/api'
-//
-// // 获取图片完整URL
-// const getImageUrl = (url) => {
-//   if (!url) return ''
-//   return url.startsWith('http') ? url : baseAPI + url
-// }
-//
-// const handleCommand = (command) => {
-//   switch (command) {
-//     case 'profile':
-//       router.push('/profile')
-//       break
-//     case 'guide':
-//       router.push('/my-guide')
-//       break
-//     case 'collection':
-//       router.push('/collection')
-//       break
-//     case 'orders':
-//       router.push('/orders')
-//       break
-//     case 'logout':
-//       handleLogout()
-//       break
-//   }
-// }
+import { computed, ref } from 'vue'
+import { useUserStore } from '@/store/user'
+import { useRouter } from 'vue-router'
+import { ElIcon, ElAvatar } from 'element-plus'
+import { User, Notebook, Star, Ticket, SwitchButton, Promotion } from '@element-plus/icons-vue'
+
+const userStore = useUserStore()
+const router = useRouter()
+const imageLoadFailed = ref(false)
+
+const isLoggedIn = computed(() => !!userStore.token)
+
+// 获取后端API基础地址
+const baseAPI = '/api'
+
+// 计算头像URL
+const avatarUrl = computed(() => {
+  if (imageLoadFailed.value || !userStore.userInfo?.avatar) {
+    return ''
+  }
+  const url = userStore.userInfo.avatar
+  return url.startsWith('http') ? url : baseAPI + url
+})
+
+const handleCommand = (command) => {
+  switch (command) {
+    case 'profile':
+      router.push('/profile')
+      break
+    case 'guide':
+      router.push('/my-guide')
+      break
+    case 'collection':
+      router.push('/collection')
+      break
+    case 'orders':
+      router.push('/orders')
+      break
+    case 'logout':
+      handleLogout()
+      break
+  }
+}
 
 const goToLogin = () => {
   router.push('/login')
@@ -128,8 +142,8 @@ const handleLogout = () => {
 
 // 图片加载失败处理
 const handleImageError = (e) => {
-  // 图片加载失败时隐藏img标签，显示默认图标
-  e.target.style.display = 'none'
+  console.log('头像加载失败，显示默认头像，尝试加载的URL:', avatarUrl.value)
+  imageLoadFailed.value = true
 }
 </script>
 
@@ -181,7 +195,8 @@ const handleImageError = (e) => {
   text-decoration: none;
   transition: color 0.3s;
 
-  i {
+  .logo-icon {
+    font-size: 1.75rem;
     margin-right: 0.5rem;
   }
 
@@ -239,20 +254,6 @@ const handleImageError = (e) => {
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
 
-  i {
-    font-size: 1.5rem;
-  }
-
-  // 用户头像图片样式
-  .user-avatar-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e5e7eb;
-    transition: border-color 0.3s;
-  }
-
   .username {
     font-weight: 500;
     font-size: 0.875rem;
@@ -261,10 +262,6 @@ const handleImageError = (e) => {
   &:hover {
     color: #2563eb;
     background-color: #eff6ff;
-
-    .user-avatar-img {
-      border-color: #2563eb;
-    }
   }
 }
 

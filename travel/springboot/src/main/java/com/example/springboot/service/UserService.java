@@ -8,7 +8,6 @@ import com.example.springboot.mapper.UserMapper;
 import com.example.springboot.util.JwtTokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,9 +17,6 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
-    @Resource
-    private PasswordEncoder bCryptPasswordEncoder;
-
     /**
      * 账号密码登录
      */
@@ -29,21 +25,8 @@ public class UserService {
         try {
             User dbUser = getByUsername(user.getUsername());
             logger.info("获取用户信息成功，用户ID: {}", dbUser.getId());
-            // 验证密码
-            boolean passwordMatch = false;
-            String dbPassword = dbUser.getPassword();
-
-            // 检查密码是否已经加密（BCrypt 加密的密码通常以 $2a$ 开头）
-            if (dbPassword.startsWith("$2a$")) {
-                // 密码已加密，使用 BCrypt 验证
-                passwordMatch = bCryptPasswordEncoder.matches(user.getPassword(), dbPassword);
-            } else {
-                // 密码未加密，直接比较
-                passwordMatch = user.getPassword().equals(dbPassword);
-                // 可以在这里添加逻辑，将明文密码加密后更新到数据库
-            }
-
-            if (!passwordMatch) {
+            // 验证密码（明文比较）
+            if (!user.getPassword().equals(dbUser.getPassword())) {
                 logger.error("密码验证失败，用户名: {}", user.getUsername());
                 throw new ServiceException("用户名或密码错误");
             }
@@ -86,10 +69,6 @@ public class UserService {
                 logger.error("邮箱已存在，邮箱: {}", user.getEmail());
                 throw new ServiceException("邮箱已存在");
             }
-
-            // 加密密码
-            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
 
             // 设置默认角色
             if (user.getRole() == null || user.getRole().isEmpty()) {
@@ -163,8 +142,6 @@ public class UserService {
      */
     public void logout(String token) {
         try {
-            // 清除JWT相关缓存
-            JwtTokenUtils.clearUserCache(token);
             logger.info("用户登出成功");
         } catch (Exception e) {
             logger.error("用户登出异常", e);

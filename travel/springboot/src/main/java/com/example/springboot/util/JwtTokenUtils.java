@@ -75,11 +75,4 @@ public class JwtTokenUtils {
             return null;
         }
     }
-
-    /**
-     * 清除用户的缓存信息
-     */
-    public static void clearUserCache(String token) {
-        // 由于不使用Redis，此方法暂时为空
-    }
 }

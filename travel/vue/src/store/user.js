@@ -15,9 +15,9 @@ export const useUserStore = defineStore('user', {
         // 判断是否登录
         isLoggedIn: (state) => !!state.token,
         // 判断是否是管理员
-        isAdmin: (state) => state.userInfo?.roleCode === 'ADMIN',
+        isAdmin: (state) => state.userInfo?.role === 'ADMIN',
         // 判断是否是普通用户
-        isUser: (state) => state.userInfo?.roleCode === 'USER'
+        isUser: (state) => state.userInfo?.role === 'USER'
     },
 
     actions: {
@@ -33,7 +33,7 @@ export const useUserStore = defineStore('user', {
 
             this.userInfo = data.userInfo || data
             this.token = data.token
-            this.role = data.roleCode
+            this.role = data.role
 
             // 存储到 LocalStorage
             localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
