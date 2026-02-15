@@ -6,7 +6,6 @@ import com.example.springboot.entity.User;
 import com.example.springboot.exception.ServiceException;
 import com.example.springboot.mapper.UserMapper;
 import com.example.springboot.util.JwtTokenUtils;
-import com.example.springboot.util.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,14 +15,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    private static final String USER_CACHE_PREFIX = "user:";
-    private static final long USER_CACHE_EXPIRE = 3600; // 缓存1小时
-
     @Resource
     private UserMapper userMapper;
-
-    @Resource
-    private RedisUtil redisUtil;
 
     @Resource
     private PasswordEncoder bCryptPasswordEncoder;
@@ -71,18 +64,54 @@ public class UserService {
     private User generateLoginResponse(User dbUser) {
         String token = JwtTokenUtils.genToken(String.valueOf(dbUser.getId()), dbUser.getPassword());
         dbUser.setToken(token);
-
-        // 将用户信息放入Redis，便于后续请求使用
-        try {
-            String userCacheKey = USER_CACHE_PREFIX + dbUser.getId();
-            redisUtil.set(userCacheKey, dbUser, USER_CACHE_EXPIRE);
-            logger.info("用户登录信息已缓存，key: {}", userCacheKey);
-        } catch (Exception e) {
-            logger.error("Redis缓存用户信息失败，将继续登录流程", e);
-            // Redis缓存失败不影响登录流程
-        }
-
         return dbUser;
+    }
+
+    /**
+     * 用户注册
+     */
+    public User register(User user) {
+        logger.info("开始注册，用户名: {}, 邮箱: {}", user.getUsername(), user.getEmail());
+        try {
+            // 检查用户名是否已存在
+            User existUser = userMapper.selectByUsername(user.getUsername());
+            if (existUser != null) {
+                logger.error("用户名已存在，用户名: {}", user.getUsername());
+                throw new ServiceException("用户名已存在");
+            }
+
+            // 检查邮箱是否已存在
+            existUser = userMapper.selectByEmail(user.getEmail());
+            if (existUser != null) {
+                logger.error("邮箱已存在，邮箱: {}", user.getEmail());
+                throw new ServiceException("邮箱已存在");
+            }
+
+            // 加密密码
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+
+            // 设置默认角色
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                user.setRole("USER");
+            }
+
+            // 插入用户
+            int result = userMapper.insert(user);
+            if (result <= 0) {
+                logger.error("注册失败，用户名: {}", user.getUsername());
+                throw new ServiceException("注册失败，请稍后重试");
+            }
+
+            logger.info("注册成功，用户ID: {}, 用户名: {}", user.getId(), user.getUsername());
+            return user;
+        } catch (ServiceException e) {
+            logger.error("注册失败，用户名: {}, 错误信息: {}", user.getUsername(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("注册失败，用户名: {}, 错误信息: {}", user.getUsername(), e.getMessage(), e);
+            throw new ServiceException("注册失败，请稍后重试");
+        }
     }
 
     /**
@@ -108,22 +137,35 @@ public class UserService {
     }
 
     /**
+     * 根据用户ID获取用户
+     */
+    public User getById(Integer id) {
+        logger.info("根据用户ID获取用户，用户ID: {}", id);
+        try {
+            User user = userMapper.selectById(id);
+            if (user == null) {
+                logger.error("用户不存在，用户ID: {}", id);
+                throw new ServiceException("用户不存在");
+            }
+            logger.info("获取用户信息成功，用户ID: {}, 用户名: {}", id, user.getUsername());
+            return user;
+        } catch (ServiceException e) {
+            logger.error("获取用户信息失败，用户ID: {}, 错误信息: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("获取用户信息失败，用户ID: {}, 错误信息: {}", id, e.getMessage(), e);
+            throw new ServiceException("获取用户信息失败，请稍后重试");
+        }
+    }
+
+    /**
      * 用户登出
      */
     public void logout(String token) {
         try {
-            // 获取当前用户
-            User currentUser = JwtTokenUtils.getCurrentUser();
-            if (currentUser != null) {
-                // 清除Redis中的用户缓存
-                String userCacheKey = USER_CACHE_PREFIX + currentUser.getId();
-                redisUtil.del(userCacheKey);
-
-                // 清除JWT相关缓存
-                JwtTokenUtils.clearUserCache(token);
-
-                logger.info("用户登出成功，用户ID: {}", currentUser.getId());
-            }
+            // 清除JWT相关缓存
+            JwtTokenUtils.clearUserCache(token);
+            logger.info("用户登出成功");
         } catch (Exception e) {
             logger.error("用户登出异常", e);
         }

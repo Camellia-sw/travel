@@ -11,12 +11,19 @@ import com.example.springboot.util.JwtTokenUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name="用户登录接口")
+@Tag(name="用户接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
+
+    @Operation(summary = "用户注册")
+    @PostMapping("/add")
+    public Result<?> register(@RequestBody User user) {
+        User registerUser = userService.register(user);
+        return Result.success(registerUser);
+    }
 
     @Operation(summary = "登录")
     @PostMapping("/login")
