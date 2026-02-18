@@ -2,6 +2,7 @@ package com.example.springboot.service;
 
 import jakarta.annotation.Resource;
 
+import com.example.springboot.common.PageResult;
 import com.example.springboot.entity.User;
 import com.example.springboot.exception.ServiceException;
 import com.example.springboot.mapper.UserMapper;
@@ -9,6 +10,8 @@ import com.example.springboot.util.JwtTokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -145,6 +148,88 @@ public class UserService {
             logger.info("用户登出成功");
         } catch (Exception e) {
             logger.error("用户登出异常", e);
+        }
+    }
+
+    /**
+     * 分页查询用户列表
+     */
+    public PageResult<User> getPage(String username, String role, Integer currentPage, Integer size) {
+        logger.info("分页查询用户列表, 当前页: {}, 每页条数: {}", currentPage, size);
+        try {
+            int offset = (currentPage - 1) * size;
+            List<User> records = userMapper.selectPage(username, role, offset, size);
+            Long total = userMapper.count(username, role);
+            logger.info("查询成功, 总条数: {}", total);
+            return new PageResult<>(records, total, currentPage, size);
+        } catch (Exception e) {
+            logger.error("分页查询用户列表失败", e);
+            throw new ServiceException("查询用户列表失败，请稍后重试");
+        }
+    }
+
+    /**
+     * 删除用户
+     */
+    public void deleteById(Integer id) {
+        logger.info("删除用户, 用户ID: {}", id);
+        try {
+            int result = userMapper.deleteById(id);
+            if (result <= 0) {
+                throw new ServiceException("删除失败，用户不存在");
+            }
+            logger.info("删除用户成功, 用户ID: {}", id);
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("删除用户失败, 用户ID: {}", id, e);
+            throw new ServiceException("删除失败，请稍后重试");
+        }
+    }
+
+    /**
+     * 更新用户信息
+     */
+    public void update(User user) {
+        logger.info("更新用户信息, 用户ID: {}", user.getId());
+        try {
+            int result = userMapper.update(user);
+            if (result <= 0) {
+                throw new ServiceException("更新失败，用户不存在");
+            }
+            logger.info("更新用户信息成功, 用户ID: {}", user.getId());
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("更新用户信息失败, 用户ID: {}", user.getId(), e);
+            throw new ServiceException("更新失败，请稍后重试");
+        }
+    }
+    /**
+     * 修改密码
+     */
+    public void updatePassword(Integer id, String oldPassword, String newPassword) {
+        logger.info("修改密码, 用户ID: {}", id);
+        try {
+            User user = userMapper.selectById(id);
+            if (user == null) {
+                throw new ServiceException("用户不存在");
+            }
+            // 验证原密码
+            if (!user.getPassword().equals(oldPassword)) {
+                throw new ServiceException("原密码错误");
+            }
+            // 更新密码
+            int result = userMapper.updatePassword(id, newPassword);
+            if (result <= 0) {
+                throw new ServiceException("密码修改失败");
+            }
+            logger.info("密码修改成功, 用户ID: {}", id);
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("修改密码失败, 用户ID: {}", id, e);
+            throw new ServiceException("修改密码失败，请稍后重试");
         }
     }
 }

@@ -25,15 +25,8 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="searchForm.nickname" placeholder="请输入昵称" clearable>
-            <template #prefix>
-              <i class="el-icon-user"></i>
-            </template>
-          </el-input>
-        </el-form-item>
         <el-form-item label="角色">
-          <el-select v-model="searchForm.roleCode" placeholder="请选择角色" clearable>
+          <el-select v-model="searchForm.role" placeholder="请选择角色" clearable>
             <el-option label="管理员" value="ADMIN"></el-option>
             <el-option label="普通用户" value="USER"></el-option>
           </el-select>
@@ -65,7 +58,6 @@
             <div class="user-name">{{ scope.row.username }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="nickname" label="昵称"></el-table-column>
         <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
         <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
         <el-table-column prop="sex" label="性别" width="80" align="center">
@@ -73,26 +65,11 @@
             {{ scope.row.sex === '男' ? '男' : scope.row.sex === '女' ? '女' : '未知' }}
           </template>
         </el-table-column>
-        <el-table-column prop="roleCode" label="角色" width="100" align="center">
+        <el-table-column prop="role" label="角色" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="scope.row.roleCode === 'ADMIN' ? 'danger' : 'primary'">
-              {{ scope.row.roleCode === 'ADMIN' ? '管理员' : '普通用户' }}
+            <el-tag :type="scope.row.role === 'ADMIN' ? 'danger' : 'primary'">
+              {{ scope.row.role === 'ADMIN' ? '管理员' : '普通用户' }}
             </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center">
-          <template #default="scope">
-            <el-switch
-                v-model="scope.row.status"
-                :active-value="1"
-                :inactive-value="0"
-                @change="handleStatusChange(scope.row)"
-            ></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" align="center">
-          <template #default="scope">
-            <span class="date-text">{{ formatDate(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="300" align="center">
@@ -146,9 +123,6 @@
         <el-form-item label="密码" prop="password" v-if="dialogType === 'add'">
           <el-input v-model="userForm.password" type="password" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="userForm.nickname" placeholder="请输入昵称"></el-input>
-        </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="userForm.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
@@ -161,18 +135,11 @@
             <el-radio label="女">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="角色" prop="roleCode">
-          <el-select v-model="userForm.roleCode" placeholder="请选择角色">
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="userForm.role" placeholder="请选择角色">
             <el-option label="管理员" value="ADMIN"></el-option>
             <el-option label="普通用户" value="USER"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-switch
-              v-model="userForm.status"
-              :active-value="1"
-              :inactive-value="0"
-          ></el-switch>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -185,9 +152,9 @@
 
     <!-- 重置密码对话框 -->
     <el-dialog
-        title="重置密码"
+        title="修改密码"
         v-model="resetPasswordDialogVisible"
-        width="400px"
+        width="500px"
         class="reset-password-dialog"
     >
       <el-form
@@ -196,11 +163,29 @@
           :rules="resetPasswordFormRules"
           label-width="100px"
       >
+        <el-form-item label="原密码" prop="oldPassword">
+          <el-input
+              v-model="resetPasswordForm.oldPassword"
+              type="password"
+              placeholder="请输入原密码"
+              show-password
+          ></el-input>
+        </el-form-item>
         <el-form-item label="新密码" prop="newPassword">
-          <el-input v-model="resetPasswordForm.newPassword" type="password" placeholder="请输入新密码"></el-input>
+          <el-input
+              v-model="resetPasswordForm.newPassword"
+              type="password"
+              placeholder="请输入新密码"
+              show-password
+          ></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input v-model="resetPasswordForm.confirmPassword" type="password" placeholder="请确认新密码"></el-input>
+          <el-input
+              v-model="resetPasswordForm.confirmPassword"
+              type="password"
+              placeholder="请再次输入新密码"
+              show-password
+          ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -232,7 +217,7 @@ const total = ref(0)
 const searchForm = reactive({
   username: '',
   nickname: '',
-  roleCode: ''
+  role: ''
 })
 
 // 用户表单
@@ -250,7 +235,7 @@ const userForm = reactive({
   email: '',
   phone: '',
   sex: '男',
-  roleCode: 'USER',
+  role: 'USER',
   status: 1
 })
 
@@ -270,7 +255,7 @@ const userFormRules = {
   phone: [
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
   ],
-  roleCode: [
+  role: [
     { required: true, message: '请选择角色', trigger: 'change' }
   ]
 }
@@ -282,11 +267,16 @@ const resetPasswordLoading = ref(false)
 const currentUserId = ref(null)
 
 const resetPasswordForm = reactive({
+  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
 
 const resetPasswordFormRules = {
+  oldPassword: [
+    { required: true, message: '请输入原密码', trigger: 'blur' },
+    { min: 6, max: 20, message: '密码长度在6到20个字符之间', trigger: 'blur' }
+  ],
   newPassword: [
     { required: true, message: '请输入新密码', trigger: 'blur' },
     { min: 6, max: 20, message: '密码长度在6到20个字符之间', trigger: 'blur' }
@@ -319,7 +309,7 @@ const fetchUsers = async () => {
 
           username: searchForm.username,
           nickname: searchForm.nickname,
-          roleCode: searchForm.roleCode,
+          role: searchForm.role,
           currentPage: currentPage.value,
           size: pageSize.value
         },{
@@ -399,23 +389,10 @@ const handleDelete = (row) => {
   }).catch(() => {})
 }
 
-// 状态变更
-const handleStatusChange = async (row) => {
-  try {
-    await request.put(`/user/status/${row.id}`, null, {
-      params: { status: row.status },
-      successMsg: `用户状态${row.status === 1 ? '启用' : '禁用'}成功`
-    })
-  } catch (error) {
-    console.error('更新用户状态失败:', error)
-    // 恢复原状态
-    row.status = row.status === 1 ? 0 : 1
-  }
-}
-
 // 重置密码
 const handleResetPassword = (row) => {
   currentUserId.value = row.id
+  resetPasswordForm.oldPassword = ''
   resetPasswordForm.newPassword = ''
   resetPasswordForm.confirmPassword = ''
   resetPasswordDialogVisible.value = true
@@ -426,14 +403,15 @@ const submitResetPassword = () => {
     if (valid) {
       resetPasswordLoading.value = true
       try {
-        await request.put(`/user/resetPassword/${currentUserId.value}`, {
+        await request.put(`/user/password/${currentUserId.value}`, {
+          oldPassword: resetPasswordForm.oldPassword,
           newPassword: resetPasswordForm.newPassword
         }, {
-          successMsg: '密码重置成功'
+          successMsg: '密码修改成功'
         })
         resetPasswordDialogVisible.value = false
       } catch (error) {
-        console.error('重置密码失败:', error)
+        console.error('修改密码失败:', error)
       } finally {
         resetPasswordLoading.value = false
       }
@@ -475,7 +453,7 @@ const resetForm = () => {
   Object.keys(userForm).forEach(key => {
     if (key === 'sex') {
       userForm[key] = '男'
-    } else if (key === 'roleCode') {
+    } else if (key === 'role') {
       userForm[key] = 'USER'
     } else if (key === 'status') {
       userForm[key] = 1

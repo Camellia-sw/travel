@@ -54,10 +54,6 @@
             <el-input v-model="form.username" disabled />
           </el-form-item>
 
-          <el-form-item label="昵称" prop="nickname">
-            <el-input v-model="form.nickname" placeholder="请输入昵称" />
-          </el-form-item>
-
           <!-- 添加性别选择 -->
           <el-form-item label="性别" prop="sex">
             <el-radio-group v-model="form.sex">
@@ -140,7 +136,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import request from '@/utils/request'
 
-const baseAPI = process.env.VUE_APP_BASE_API || '/api'
+const baseAPI = import.meta.env.VITE_API_BASE_URL || '/api'
 const userStore = useUserStore()
 const formRef = ref(null)
 const passwordFormRef = ref(null)
@@ -152,7 +148,6 @@ const changingPassword = ref(false)
 const form = reactive({
   id: '',
   username: '',
-  nickname: '',
   email: '',
   phone: '',
   sex: '男',
@@ -173,10 +168,6 @@ const passwordForm = reactive({
 
 // 表单验证规则
 const rules = {
-  nickname: [
-    { required: true, message: '请输入昵称', trigger: 'blur' },
-    { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-  ],
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
@@ -226,7 +217,6 @@ const fetchUserInfo = async () => {
     // 直接更新表单数据
     form.id = res.id || userStore.userInfo.id
     form.username = res.username || ''
-    form.nickname = res.nickname || ''
     form.email = res.email || ''
     form.phone = res.phone || ''
     form.sex = res.sex || '男'
@@ -351,7 +341,6 @@ const handleSave = async () => {
     await request.put(
         `/user/${form.id}`,
         {
-          nickname: form.nickname,
           email: form.email,
           phone: form.phone,
           sex: form.sex
@@ -364,7 +353,6 @@ const handleSave = async () => {
             // 更新store中的用户信息
             userStore.updateUserInfo({
               ...userStore.userInfo,
-              nickname: form.nickname,
               email: form.email,
               phone: form.phone,
               sex: form.sex
@@ -571,4 +559,4 @@ onMounted(() => {
     }
   }
 }
-</style> 
+</style>

@@ -24,7 +24,12 @@ export const backendRoutes = [
         redirect: '/back/manager',
         children: [
             {path: 'manager', name: 'Manager', component: () => import('@/views/backend/Manager.vue'), meta: { title: '首页', icon: 'HomeFilled' }},
-            {path: 'user', name: 'UserManagement', component: () => import('@/views/backend/user/index.vue'), meta: { title: '用户管理', icon: 'User' }
+            {path: 'user', name: 'UserManagement', component: () => import('@/views/backend/user/index.vue'), meta: { title: '用户管理', icon: 'User' }},
+            {
+                path: 'profile',
+                name: 'BackendProfile',
+                component: () => import('@/views/backend/user/PersonInfo.vue'),
+                meta: { title: '个人信息', icon: 'UserFilled' }
             },
         ]
     }
@@ -66,7 +71,7 @@ router.beforeEach((to, from, next) => {
     if (userStore.isLoggedIn) {
         // 处理登录页面访问
         if (to.path === '/login') {
-            next(userStore.isUser ? '/' : '/back/dashboard')
+            next(userStore.isUser ? '/' : '/back/manager')
             return
         }
 
@@ -75,7 +80,7 @@ router.beforeEach((to, from, next) => {
             if (to.path.startsWith('/back')) {
                 next()
             } else {
-                next('/back/dashboard')
+                next('/back/manager')
             }
             return
         } else {
