@@ -94,7 +94,7 @@ const handleLoginSuccess = async (data) => {
   if (data.role !== 'USER') {
     // 管理员登录，跳转到后台
     await router.isReady()
-    router.push(route.query.redirect || '/back/dashboard')
+    router.push(route.query.redirect || '/back/manager')
   } else {
     // 普通用户登录，跳转到前台
     const redirect = route.query.redirect || '/'

@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 // 导入 Element Plus
 import ElementPlus from 'element-plus'
+
 // 导入自定义主题色配置
 import './style/element-variables.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
