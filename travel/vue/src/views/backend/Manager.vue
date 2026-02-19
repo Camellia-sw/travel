@@ -35,7 +35,7 @@ const roleLabel = computed(() => {
     'ADMIN': '系统管理员',
     'USER': '普通用户'
   }
-  return roleMap[userInfo.value?.roleCode] || '未知角色'
+  return roleMap[userInfo.value?.role] || '未知角色'
 })
 
 const avatarUrl = computed(() => {

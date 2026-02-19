@@ -20,15 +20,11 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
-    /**
-     * 账号密码登录
-     */
     public User login(User user) {
         logger.info("开始登录，用户名: {}", user.getUsername());
         try {
             User dbUser = getByUsername(user.getUsername());
             logger.info("获取用户信息成功，用户ID: {}", dbUser.getId());
-            // 验证密码（明文比较）
             if (!user.getPassword().equals(dbUser.getPassword())) {
                 logger.error("密码验证失败，用户名: {}", user.getUsername());
                 throw new ServiceException("用户名或密码错误");
@@ -44,41 +40,31 @@ public class UserService {
         }
     }
 
-    /**
-     * 生成登录响应
-     */
     private User generateLoginResponse(User dbUser) {
         String token = JwtTokenUtils.genToken(String.valueOf(dbUser.getId()), dbUser.getPassword());
         dbUser.setToken(token);
         return dbUser;
     }
 
-    /**
-     * 用户注册
-     */
     public User register(User user) {
         logger.info("开始注册，用户名: {}, 邮箱: {}", user.getUsername(), user.getEmail());
         try {
-            // 检查用户名是否已存在
             User existUser = userMapper.selectByUsername(user.getUsername());
             if (existUser != null) {
                 logger.error("用户名已存在，用户名: {}", user.getUsername());
                 throw new ServiceException("用户名已存在");
             }
 
-            // 检查邮箱是否已存在
             existUser = userMapper.selectByEmail(user.getEmail());
             if (existUser != null) {
                 logger.error("邮箱已存在，邮箱: {}", user.getEmail());
                 throw new ServiceException("邮箱已存在");
             }
 
-            // 设置默认角色
             if (user.getRole() == null || user.getRole().isEmpty()) {
                 user.setRole("USER");
             }
 
-            // 插入用户
             int result = userMapper.insert(user);
             if (result <= 0) {
                 logger.error("注册失败，用户名: {}", user.getUsername());
@@ -96,9 +82,6 @@ public class UserService {
         }
     }
 
-    /**
-     * 根据用户名获取用户
-     */
     public User getByUsername(String username) {
         logger.info("根据用户名获取用户，用户名: {}", username);
         try {
@@ -118,9 +101,6 @@ public class UserService {
         }
     }
 
-    /**
-     * 根据用户ID获取用户
-     */
     public User getById(Integer id) {
         logger.info("根据用户ID获取用户，用户ID: {}", id);
         try {
@@ -140,9 +120,6 @@ public class UserService {
         }
     }
 
-    /**
-     * 用户登出
-     */
     public void logout(String token) {
         try {
             logger.info("用户登出成功");
@@ -151,9 +128,6 @@ public class UserService {
         }
     }
 
-    /**
-     * 分页查询用户列表
-     */
     public PageResult<User> getPage(String username, String role, Integer currentPage, Integer size) {
         logger.info("分页查询用户列表, 当前页: {}, 每页条数: {}", currentPage, size);
         try {
@@ -168,9 +142,6 @@ public class UserService {
         }
     }
 
-    /**
-     * 删除用户
-     */
     public void deleteById(Integer id) {
         logger.info("删除用户, 用户ID: {}", id);
         try {
@@ -187,16 +158,41 @@ public class UserService {
         }
     }
 
-    /**
-     * 更新用户信息
-     */
     public void update(User user) {
-        logger.info("更新用户信息, 用户ID: {}", user.getId());
+        logger.info("更新用户信息, 用户ID: {}, avatar: {}", user.getId(), user.getAvatar());
         try {
-            int result = userMapper.update(user);
-            if (result <= 0) {
-                throw new ServiceException("更新失败，用户不存在");
+            // 先从数据库获取现有的用户信息
+            User dbUser = userMapper.selectById(user.getId());
+            if (dbUser == null) {
+                throw new ServiceException("用户不存在");
             }
+
+            // 只更新传入的非 null 字段
+            if (user.getUsername() != null) {
+                dbUser.setUsername(user.getUsername());
+            }
+            if (user.getPassword() != null) {
+                dbUser.setPassword(user.getPassword());
+            }
+            if (user.getEmail() != null) {
+                dbUser.setEmail(user.getEmail());
+            }
+            if (user.getPhone() != null) {
+                dbUser.setPhone(user.getPhone());
+            }
+            if (user.getRole() != null) {
+                dbUser.setRole(user.getRole());
+            }
+            if (user.getAvatar() != null) {
+                dbUser.setAvatar(user.getAvatar());
+            }
+            if (user.getSex() != null) {
+                dbUser.setSex(user.getSex());
+            }
+
+            // 使用完整的 dbUser 进行更新
+            int result = userMapper.update(dbUser);
+            logger.info("更新用户信息结果: {}", result);
             logger.info("更新用户信息成功, 用户ID: {}", user.getId());
         } catch (ServiceException e) {
             throw e;
@@ -205,9 +201,7 @@ public class UserService {
             throw new ServiceException("更新失败，请稍后重试");
         }
     }
-    /**
-     * 修改密码
-     */
+
     public void updatePassword(Integer id, String oldPassword, String newPassword) {
         logger.info("修改密码, 用户ID: {}", id);
         try {
@@ -215,11 +209,9 @@ public class UserService {
             if (user == null) {
                 throw new ServiceException("用户不存在");
             }
-            // 验证原密码
             if (!user.getPassword().equals(oldPassword)) {
                 throw new ServiceException("原密码错误");
             }
-            // 更新密码
             int result = userMapper.updatePassword(id, newPassword);
             if (result <= 0) {
                 throw new ServiceException("密码修改失败");

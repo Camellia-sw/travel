@@ -25,12 +25,9 @@ export const backendRoutes = [
         children: [
             {path: 'manager', name: 'Manager', component: () => import('@/views/backend/Manager.vue'), meta: { title: '首页', icon: 'HomeFilled' }},
             {path: 'user', name: 'UserManagement', component: () => import('@/views/backend/user/index.vue'), meta: { title: '用户管理', icon: 'User' }},
-            {
-                path: 'profile',
-                name: 'BackendProfile',
-                component: () => import('@/views/backend/user/PersonInfo.vue'),
-                meta: { title: '个人信息', icon: 'UserFilled' }
-            },
+            {path: 'profile', name: 'BackendProfile', component: () => import('@/views/backend/user/PersonInfo.vue'), meta: { title: '个人信息', icon: 'UserFilled' }},
+            {path: 'scenic', name: 'ScenicManagement', component: () => import('@/views/backend/scenic/index.vue'), meta: { title: '景点管理', icon: 'Location' }},
+            {path: 'category', name: 'CategoryManagement', component: () => import('@/views/backend/scenic/CategoryList.vue'), meta: { title: '分类管理', icon: 'Menu' }},
         ]
     }
 ]

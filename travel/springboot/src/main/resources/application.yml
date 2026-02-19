@@ -31,3 +31,7 @@ mybatis:
     # 配置日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+
+# 文件上传配置
+file:
+  upload-path: ${user.dir}/springboot/files

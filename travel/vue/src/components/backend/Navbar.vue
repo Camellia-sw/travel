@@ -11,12 +11,6 @@
     </div>
 
     <div class="right-menu">
-      <div class="right-menu-item" @click="toggleFullScreen">
-        <el-icon :size="20">
-          <component :is="isFullscreen ? Aim : FullScreen" />
-        </el-icon>
-      </div>
-
       <el-dropdown trigger="click">
         <div class="avatar-wrapper">
           <el-avatar :size="32" :src="avatarUrl">
@@ -41,12 +35,12 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { useAppStore } from '@/store/app'
 import { ElMessageBox } from 'element-plus'
-import { Expand, Fold, ArrowDown, User, SwitchButton, FullScreen, Aim } from '@element-plus/icons-vue'
+import { Expand, Fold, ArrowDown, User, SwitchButton } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -54,7 +48,6 @@ const userStore = useUserStore()
 const appStore = useAppStore()
 const baseAPI = import.meta.env.VITE_BASE_API || '/api'
 const userInfo = computed(() => userStore.userInfo)
-const isFullscreen = ref(false)
 
 const toggleSidebar = () => {
   appStore.toggleSidebar()
@@ -62,31 +55,6 @@ const toggleSidebar = () => {
 const avatarUrl = computed(() => {
   return userInfo.value?.avatar ? baseAPI + userInfo.value.avatar : '';
 })
-const toggleFullScreen = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen()
-    isFullscreen.value = true
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-      isFullscreen.value = false
-    }
-  }
-}
-
-// 监听全屏状态变化
-const fullscreenChangeHandler = () => {
-  isFullscreen.value = !!document.fullscreenElement
-}
-
-document.addEventListener('fullscreenchange', fullscreenChangeHandler)
-
-// 组件卸载时移除事件监听
-onUnmounted(() => {
-  document.removeEventListener('fullscreenchange', fullscreenChangeHandler)
-})
-
-
 
 const handleLogout = () => {
   ElMessageBox.confirm('确定要退出登录吗?', '提示', {
@@ -150,23 +118,6 @@ const handleLogout = () => {
     display: flex;
     align-items: center;
     gap: 8px;
-
-    .right-menu-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #666;
-      border-radius: 4px;
-      transition: all 0.3s;
-      height: 32px;
-      width: 32px;
-
-      &:hover {
-        background: #f6f6f6;
-        color: #333;
-      }
-    }
 
     .avatar-wrapper {
       display: flex;
