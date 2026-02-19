@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.TravelGuideMapper">
+
+    <!-- 分页查询攻略列表 -->
+    <select id="selectPage" resultType="com.example.springboot.entity.TravelGuide">
+        SELECT
+        tg.*,
+        u.username,
+        u.avatar
+        FROM `travel_guide` tg
+        LEFT JOIN `user` u ON tg.user_id = u.id
+        <where>
+            <if test="title != null and title != ''">
+                AND tg.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="userId != null">
+                AND tg.user_id = #{userId}
+            </if>
+        </where>
+        ORDER BY tg.create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 统计攻略总数 -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `travel_guide`
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取热门攻略 -->
+    <select id="selectHotGuides" resultType="com.example.springboot.entity.TravelGuide">
+        SELECT
+        tg.*,
+        u.username,
+        u.avatar
+        FROM `travel_guide` tg
+        LEFT JOIN `user` u ON tg.user_id = u.id
+        ORDER BY tg.views DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 获取搜索建议 -->
+    <select id="selectSuggestions" resultType="com.example.springboot.entity.TravelGuide">
+        SELECT id, title FROM `travel_guide`
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        LIMIT #{limit}
+    </select>
+
+</mapper>
