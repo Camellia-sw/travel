@@ -31,6 +31,7 @@ export const backendRoutes = [
             {path: 'comment', name: 'CommentManagement', component: () => import('@/views/backend/Comment.vue'), meta: { title: '评论管理', icon: 'ChatDotRound' }},
             {path: 'guide', name: 'GuideManagement', component: () => import('@/views/backend/Guide.vue'), meta: { title: '攻略管理', icon: 'Document' }},
             {path: 'collection', name: 'CollectionManagement', component: () => import('@/views/backend//Collection.vue'), meta: { title: '收藏管理', icon: 'Star' }},
+            {path: 'ticket', name: 'TicketManagement', component: () => import('@/views/backend/ticket.vue'), meta: { title: '门票管理', icon: 'Ticket' }},
         ]
     }
 ]

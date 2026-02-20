@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.TicketMapper">
+
+<select id="selectPage" resultType="com.example.springboot.entity.Ticket">
+    SELECT * FROM `ticket`
+    <where>
+        <if test="ticketName != null and ticketName != ''">
+            AND ticket_name LIKE CONCAT('%', #{ticketName}, '%')
+        </if>
+        <if test="ticketType != null and ticketType != ''">
+            AND ticket_type = #{ticketType}
+        </if>
+        <if test="scenicId != null">
+            AND scenic_id = #{scenicId}
+        </if>
+    </where>
+    ORDER BY create_time DESC
+    LIMIT #{offset}, #{size}
+</select>
+
+<select id="count" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM `ticket`
+    <where>
+        <if test="ticketName != null and ticketName != ''">
+            AND ticket_name LIKE CONCAT('%', #{ticketName}, '%')
+        </if>
+        <if test="ticketType != null and ticketType != ''">
+            AND ticket_type = #{ticketType}
+        </if>
+        <if test="scenicId != null">
+            AND scenic_id = #{scenicId}
+        </if>
+    </where>
+</select>
+
+</mapper>
