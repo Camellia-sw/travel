@@ -34,7 +34,7 @@ d:\IdeaProjects\travel\vue\src\views\backend\Guide.vue
           row-key="id"
           class="guide-table"
       >
-        <el-table-column prop="id" label="ID" width="60" />
+
         <el-table-column label="作者" width="180">
           <template #default="scope">
             <div class="author-info">
@@ -57,7 +57,7 @@ d:\IdeaProjects\travel\vue\src\views\backend\Guide.vue
             <div v-else class="no-image">无封面</div>
           </template>
         </el-table-column>
-        <el-table-column prop="views" label="浏览量" width="90" sortable>
+        <el-table-column prop="views" label="浏览量" width="100" sortable>
           <template #default="scope">
             <el-tag type="info" effect="plain">{{ scope.row.views || 0 }}</el-tag>
           </template>

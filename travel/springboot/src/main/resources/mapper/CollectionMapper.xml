@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.springboot.mapper.CollectionMapper">
+
+    <select id="selectPage" resultType="com.example.springboot.entity.Collection">
+        SELECT
+        c.*,
+        u.username,
+        u.avatar as user_avatar,
+        tg.title as guide_title,
+        tg.views as guide_views,
+        tg.cover_image as guide_cover_image
+        FROM `collection` c
+        LEFT JOIN `user` u ON c.user_id = u.id
+        LEFT JOIN `travel_guide` tg ON c.guide_id = tg.id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="guideTitle != null and guideTitle != ''">
+                AND tg.title LIKE CONCAT('%', #{guideTitle}, '%')
+            </if>
+        </where>
+        ORDER BY c.create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `collection` c
+        LEFT JOIN `user` u ON c.user_id = u.id
+        LEFT JOIN `travel_guide` tg ON c.guide_id = tg.id
+        <where>
+            <if test="username != null and username != ''">
+                AND u.username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="guideTitle != null and guideTitle != ''">
+                AND tg.title LIKE CONCAT('%', #{guideTitle}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByUserId" resultType="com.example.springboot.entity.Collection">
+        SELECT * FROM `collection`
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+            LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByUserId" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `collection`
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>
