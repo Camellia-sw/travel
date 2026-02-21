@@ -64,11 +64,6 @@
           <span>住宿管理</span>
         </el-menu-item>
 
-        <el-menu-item index="/back/carousel" v-if="userStore.isAdmin">
-          <el-icon><Picture /></el-icon>
-          <span>轮播图管理</span>
-        </el-menu-item>
-
       </el-menu>
     </div>
   </div>
@@ -91,7 +86,6 @@ import {
   Ticket,
   List,
   House,
-  Picture,
   Van
 } from '@element-plus/icons-vue'
 const route = useRoute()

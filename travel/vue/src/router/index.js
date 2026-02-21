@@ -33,6 +33,7 @@ export const backendRoutes = [
             {path: 'collection', name: 'CollectionManagement', component: () => import('@/views/backend/Collection.vue'), meta: { title: '收藏管理', icon: 'Star' }},
             {path: 'ticket', name: 'TicketManagement', component: () => import('@/views/backend/ticket.vue'), meta: { title: '门票管理', icon: 'Ticket' }},
             {path: 'order', name: 'OrderManagement', component: () => import('@/views/backend/Order.vue'), meta: { title: '订单管理', icon: 'ShoppingCart' }},
+            {path: 'accommodation', name: 'AccommodationManagement', component: () => import('@/views/backend/Accommodation.vue'), meta: { title: '住宿管理', icon: 'House' }},
         ]
     }
 ]

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.AccommodationMapper">
+
+    <!-- 分页查询住宿列表 -->
+    <select id="selectPage" resultType="com.example.springboot.entity.Accommodation">
+        SELECT * FROM `accommodation`
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="scenicId != null">
+                AND scenic_id = #{scenicId}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+        </where>
+        ORDER BY id ASC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 统计住宿总数 -->
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `accommodation`
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="scenicId != null">
+                AND scenic_id = #{scenicId}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+        </where>
+    </select>
+
+</mapper>
