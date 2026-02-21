@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.OrderMapper">
+
+    <select id="selectPage" resultType="com.example.springboot.entity.Order">
+        SELECT * FROM `order`
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                AND order_no LIKE CONCAT('%', #{orderNo}, '%')
+            </if>
+            <if test="visitorName != null and visitorName != ''">
+                AND visitor_name LIKE CONCAT('%', #{visitorName}, '%')
+            </if>
+            <if test="visitorPhone != null and visitorPhone != ''">
+                AND visitor_phone LIKE CONCAT('%', #{visitorPhone}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `order`
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                AND order_no LIKE CONCAT('%', #{orderNo}, '%')
+            </if>
+            <if test="visitorName != null and visitorName != ''">
+                AND visitor_name LIKE CONCAT('%', #{visitorName}, '%')
+            </if>
+            <if test="visitorPhone != null and visitorPhone != ''">
+                AND visitor_phone LIKE CONCAT('%', #{visitorPhone}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByUserId" resultType="com.example.springboot.entity.Order">
+        SELECT * FROM `order`
+        <where>
+            user_id = #{userId}
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByUserId" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM `order`
+        <where>
+            user_id = #{userId}
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

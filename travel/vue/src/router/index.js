@@ -30,8 +30,9 @@ export const backendRoutes = [
             {path: 'category', name: 'CategoryManagement', component: () => import('@/views/backend/Category.vue'), meta: { title: '分类管理', icon: 'Menu' }},
             {path: 'comment', name: 'CommentManagement', component: () => import('@/views/backend/Comment.vue'), meta: { title: '评论管理', icon: 'ChatDotRound' }},
             {path: 'guide', name: 'GuideManagement', component: () => import('@/views/backend/Guide.vue'), meta: { title: '攻略管理', icon: 'Document' }},
-            {path: 'collection', name: 'CollectionManagement', component: () => import('@/views/backend//Collection.vue'), meta: { title: '收藏管理', icon: 'Star' }},
+            {path: 'collection', name: 'CollectionManagement', component: () => import('@/views/backend/Collection.vue'), meta: { title: '收藏管理', icon: 'Star' }},
             {path: 'ticket', name: 'TicketManagement', component: () => import('@/views/backend/ticket.vue'), meta: { title: '门票管理', icon: 'Ticket' }},
+            {path: 'order', name: 'OrderManagement', component: () => import('@/views/backend/Order.vue'), meta: { title: '订单管理', icon: 'ShoppingCart' }},
         ]
     }
 ]

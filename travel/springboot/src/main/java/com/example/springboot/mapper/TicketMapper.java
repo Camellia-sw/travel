@@ -42,4 +42,7 @@ public interface TicketMapper {
 
     @Select("SELECT * FROM `ticket`")
     List<Ticket> selectAll();
+
+    @Update("UPDATE `ticket` SET stock = stock + #{quantity} WHERE id = #{id}")
+    int updateStock(@Param("id") Integer id, @Param("quantity") Integer quantity);
 }
