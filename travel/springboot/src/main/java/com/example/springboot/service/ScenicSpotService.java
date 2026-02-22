@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class ScenicSpotService {
@@ -125,6 +127,52 @@ public class ScenicSpotService {
         } catch (Exception e) {
             logger.error("获取所有景点失败", e);
             throw new ServiceException("查询失败，请稍后重试");
+        }
+    }
+
+    public List<Map<String, Object>> getHotScenics(Integer limit) {
+        logger.info("获取热门景点, 限制条数: {}", limit);
+        try {
+            List<ScenicSpot> scenics = scenicSpotMapper.selectHotScenics(limit);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (ScenicSpot scenic : scenics) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", scenic.getId());
+                map.put("name", scenic.getName());
+                map.put("description", scenic.getDescription());
+                map.put("location", scenic.getLocation());
+                map.put("price", scenic.getPrice());
+                map.put("imageUrl", scenic.getImageUrl());
+                map.put("rating", scenic.getRating() != null ? scenic.getRating() : 4.8);
+                result.add(map);
+            }
+            logger.info("获取热门景点成功");
+            return result;
+        } catch (Exception e) {
+            logger.error("获取热门景点失败", e);
+            throw new ServiceException("获取热门景点失败，请稍后重试");
+        }
+    }
+
+    public List<Map<String, Object>> getScenicSuggestions(String keyword, Integer limit) {
+        logger.info("获取景点搜索建议, 关键词: {}, 限制条数: {}", keyword, limit);
+        try {
+            List<ScenicSpot> scenics = scenicSpotMapper.selectSuggestions(keyword, limit);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (ScenicSpot scenic : scenics) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", scenic.getId());
+                map.put("name", scenic.getName());
+                map.put("location", scenic.getLocation());
+                map.put("price", scenic.getPrice());
+                map.put("imageUrl", scenic.getImageUrl());
+                result.add(map);
+            }
+            logger.info("获取景点搜索建议成功");
+            return result;
+        } catch (Exception e) {
+            logger.error("获取景点搜索建议失败", e);
+            throw new ServiceException("获取景点搜索建议失败，请稍后重试");
         }
     }
 }

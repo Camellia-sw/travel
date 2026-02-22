@@ -34,4 +34,18 @@
         </where>
     </select>
 
+    <!-- 获取热门景点 -->
+    <select id="selectHotScenics" resultType="com.example.springboot.entity.ScenicSpot">
+        SELECT * FROM `scenic_spot`
+        ORDER BY create_time DESC
+            LIMIT #{limit}
+    </select>
+
+    <!-- 获取景点搜索建议 -->
+    <select id="selectSuggestions" resultType="com.example.springboot.entity.ScenicSpot">
+        SELECT id, name, location, price, image_url FROM `scenic_spot`
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+            LIMIT #{limit}
+    </select>
+
 </mapper>

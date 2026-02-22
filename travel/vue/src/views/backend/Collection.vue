@@ -96,7 +96,7 @@ import request from '@/utils/request'
 import { formatDate } from '@/utils/dateUtils'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
-const baseAPI = import.meta.env.VUE_APP_BASE_API || '/api'
+const baseAPI = import.meta.env.VITE_API_BASE_URL || '/api'
 const tableData = ref([])
 const loading = ref(false)
 const currentPage = ref(1)

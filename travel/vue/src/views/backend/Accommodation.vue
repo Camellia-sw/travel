@@ -280,7 +280,7 @@ import request from '@/utils/request'
 import { Delete, Edit, Plus, Star } from '@element-plus/icons-vue'
 import draggable from 'vuedraggable'
 
-const baseAPI = import.meta.env.VUE_APP_BASE_API || '/api'
+const baseAPI = import.meta.env.VITE_API_BASE_URL || '/api'
 
 // 图片列表管理
 const imageList = ref([])

@@ -71,4 +71,21 @@ public class ScenicSpotController {
         List<ScenicSpot> list = scenicSpotService.getAll();
         return Result.success(list);
     }
+
+    @Operation(summary = "获取热门景点")
+    @GetMapping("/hot")
+    public Result<?> getHotScenics(
+            @RequestParam(required = false, defaultValue = "4") Integer limit) {
+        List<Map<String, Object>> hotScenics = scenicSpotService.getHotScenics(limit);
+        return Result.success(hotScenics);
+    }
+
+    @Operation(summary = "获取景点搜索建议")
+    @GetMapping("/suggestions")
+    public Result<?> getScenicSuggestions(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "5") Integer limit) {
+        List<Map<String, Object>> suggestions = scenicSpotService.getScenicSuggestions(keyword, limit);
+        return Result.success(suggestions);
+    }
 }

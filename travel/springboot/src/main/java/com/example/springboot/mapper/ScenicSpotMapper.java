@@ -43,4 +43,9 @@ public interface ScenicSpotMapper {
 
     @Select("SELECT * FROM `scenic_spot`")
     List<ScenicSpot> selectAll();
+
+    List<ScenicSpot> selectHotScenics(@Param("limit") Integer limit);
+
+    List<ScenicSpot> selectSuggestions(@Param("keyword") String keyword,
+                                       @Param("limit") Integer limit);
 }
