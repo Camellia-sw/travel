@@ -8,151 +8,19 @@
       </h3>
     </div>
 
-    <!-- 加载状态 -->
-    <div v-if="isLoading" class="loading-state">
-      <el-skeleton :rows="3" animated />
-      <p class="loading-text">正在分析您的偏好...</p>
-    </div>
-
-    <!-- 推荐结果 -->
-    <div v-else-if="recommendations.length > 0" class="scenic-cards-grid">
-      <div
-          v-for="item in recommendations"
-          :key="item.id"
-          class="scenic-item-card"
-          @click="viewDetail(item.id)"
-      >
-        <!-- 封面图 -->
-        <div class="scenic-card-image" :style="{ backgroundImage: `url('${getImageUrl(item.imageUrl)}')` }">
-          <!-- 价格徽章 -->
-          <div class="scenic-price-badge" v-if="item.price === 0">免费</div>
-          <div class="scenic-price-badge price-tag" v-else-if="item.price > 0">¥{{ item.price }}</div>
-          <!-- 评分徽章 -->
-          <div class="scenic-rating-badge">
-            <i class="fas fa-star"></i> {{ item.rating || '4.8' }}
-          </div>
-        </div>
-
-        <!-- 卡片内容 -->
-        <div class="scenic-card-body">
-          <h3 class="scenic-card-name">{{ item.name }}</h3>
-          <p class="scenic-card-location">
-            <i class="fas fa-map-marker-alt"></i>
-            {{ item.location || '未知地区' }}
-          </p>
-          <p class="scenic-card-desc">{{ truncateText(item.description, 50) }}</p>
-        </div>
-      </div>
-    </div>
-
     <!-- 空状态 -->
-    <div v-else class="empty-state">
+    <div class="empty-state">
       <div class="empty-icon">
         <i class="fas fa-inbox"></i>
       </div>
       <p class="empty-text">暂无推荐</p>
-      <p class="empty-hint">请先进行收藏、评分、下单等操作，系统将为您提供更好的推荐</p>
+      <p class="empty-hint">推荐功能开发中，敬请期待</p>
     </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/store/user'
-import { getCollaborativeFilteringRecommendations } from '@/api/CollaborativeFilteringApi'
-
-const router = useRouter()
-const userStore = useUserStore()
-const baseAPI = import.meta.env.VITE_APP_BASE_API || '/api'
-
-// 推荐列表
-const recommendations = ref([])
-
-// 加载状态
-const isLoading = ref(false)
-
-/**
- * 获取推荐
- */
-const fetchRecommendations = () => {
-  if (!userStore.userInfo?.id) {
-    ElMessage.warning('请先登录')
-    return
-  }
-
-  isLoading.value = true
-
-  getCollaborativeFilteringRecommendations(
-      {
-        userId: userStore.userInfo.id,
-        topN: 12
-      },
-      {
-        onSuccess: (data) => {
-          recommendations.value = data || []
-          if (data && data.length > 0) {
-            ElMessage.success(`为您找到${data.length}个推荐景点`)
-          } else {
-            ElMessage.info('暂无推荐，请先评分一些景点')
-          }
-          isLoading.value = false
-        },
-        onError: (error) => {
-          console.error('获取推荐失败:', error)
-          ElMessage.error('推荐服务暂时不可用，请稍后重试')
-          isLoading.value = false
-        }
-      }
-  )
-}
-
-/**
- * 获取图片完整URL
- */
-const getImageUrl = (url) => {
-  if (!url) return 'https://via.placeholder.com/300x200?text=暂无图片'
-  return url.startsWith('http') ? url : baseAPI + url
-}
-
-/**
- * 格式化价格
- */
-const formatPrice = (price) => {
-  if (price === null || price === undefined) return '暂无价格'
-  if (price === 0) return '免费'
-  return `¥${price}`
-}
-
-/**
- * 截断文本
- */
-const truncateText = (text, length) => {
-  if (!text) return ''
-  return text.length > length ? text.substring(0, length) + '...' : text
-}
-
-/**
- * 获取占位图
- */
-const getPlaceholderImage = () => {
-  return 'https://via.placeholder.com/300x200?text=暂无图片'
-}
-
-
-/**
- * 查看景点详情
- */
-const viewDetail = (id) => {
-  router.push(`/scenic/${id}`)
-}
-
-// 组件挂载时获取推荐
-onMounted(() => {
-  fetchRecommendations()
-})
 </script>
 
 <style lang="scss" scoped>
