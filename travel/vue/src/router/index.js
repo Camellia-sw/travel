@@ -10,6 +10,8 @@ const frontendRoutes = [
         component: () => import('@/layouts/FrontendLayout.vue'),
         children: [
             {path: '', name: 'Home', component: () => import('@/views/frontend/Home.vue'), meta: { title: '首页' }},
+            {path: 'profile', name: 'Profile.vue', component: () => import('@/views/frontend/Profile.vue'), meta: { title: '个人中心', requiresAuth: true }
+            },
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},
