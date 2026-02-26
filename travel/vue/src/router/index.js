@@ -10,8 +10,10 @@ const frontendRoutes = [
         component: () => import('@/layouts/FrontendLayout.vue'),
         children: [
             {path: '', name: 'Home', component: () => import('@/views/frontend/Home.vue'), meta: { title: '首页' }},
-            {path: 'profile', name: 'Profile.vue', component: () => import('@/views/frontend/Profile.vue'), meta: { title: '个人中心', requiresAuth: true }
-            },
+            {path: 'profile', name: 'Profile.vue', component: () => import('@/views/frontend/Profile.vue'), meta: { title: '个人中心', requiresAuth: true }},
+            {path: 'scenic', name: 'ScenicList', component: () => import('@/views/frontend/scenic/ScenicList.vue'), meta: { title: '景点列表' }},
+            // {path: 'scenic/:id', name: 'ScenicDetail', component: () => import('@/views/frontend/scenic/ScenicDetail.vue'), meta: { title: '景点详情' }},
+            // {path: 'scenic/category/:categoryId', name: 'ScenicByCategory', component: () => import('@/views/frontend/scenic/ScenicList.vue'), props: true, meta: { title: '分类景点' }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},
