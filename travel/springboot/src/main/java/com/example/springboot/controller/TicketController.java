@@ -22,10 +22,11 @@ public class TicketController {
     @GetMapping("/page")
     public Result<?> getPage(@RequestParam(required = false) String ticketName,
                              @RequestParam(required = false) String ticketType,
+                             @RequestParam(required = false) String priceRange,
                              @RequestParam(required = false) Integer scenicId,
                              @RequestParam(defaultValue = "1") Integer currentPage,
                              @RequestParam(defaultValue = "10") Integer size) {
-        PageResult<Ticket> pageResult = ticketService.getPage(ticketName, ticketType, scenicId, currentPage, size);
+        PageResult<Ticket> pageResult = ticketService.getPage(ticketName, ticketType, priceRange, scenicId, currentPage, size);
         return Result.success(pageResult);
     }
 
@@ -70,4 +71,6 @@ public class TicketController {
         List<Ticket> list = ticketService.getAll();
         return Result.success(list);
     }
+
+
 }

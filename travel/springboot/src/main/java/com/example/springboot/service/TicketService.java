@@ -19,12 +19,12 @@ public class TicketService {
     @Resource
     private TicketMapper ticketMapper;
 
-    public PageResult<Ticket> getPage(String ticketName, String ticketType, Integer scenicId, Integer currentPage, Integer size) {
-        logger.info("分页查询门票列表, 当前页: {}, 每页条数: {}", currentPage, size);
+    public PageResult<Ticket> getPage(String ticketName, String ticketType, String priceRange, Integer scenicId, Integer currentPage, Integer size) {
+        logger.info("分页查询门票列表, 当前页: {}, 每页条数: {}, 价格区间: {}", currentPage, size, priceRange);
         try {
             int offset = (currentPage - 1) * size;
-            List<Ticket> records = ticketMapper.selectPage(ticketName, ticketType, scenicId, offset, size);
-            Long total = ticketMapper.count(ticketName, ticketType, scenicId);
+            List<Ticket> records = ticketMapper.selectPage(ticketName, ticketType, priceRange, scenicId, offset, size);
+            Long total = ticketMapper.count(ticketName, ticketType, priceRange, scenicId);
             logger.info("查询成功, 总条数: {}", total);
             return new PageResult<>(records, total, currentPage, size);
         } catch (Exception e) {
@@ -159,4 +159,6 @@ public class TicketService {
             throw new ServiceException("查询失败，请稍后重试");
         }
     }
+
+
 }

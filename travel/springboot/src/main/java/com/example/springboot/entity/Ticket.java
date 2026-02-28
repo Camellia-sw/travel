@@ -43,6 +43,19 @@ public class Ticket {
     /** 更新时间 */
     private LocalDateTime updateTime;
 
+    // 非数据库字段
+    /** 景点名称 */
+    private String scenicName;
+
+    /** 景点位置 */
+    private String scenicLocation;
+
+    /** 封面图片 */
+    private String coverImage;
+
+    /** 销售数量 */
+    private Integer salesCount;
+
     // Getters and Setters
     public Integer getId() {
         return id;
@@ -138,5 +151,37 @@ public class Ticket {
 
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getScenicName() {
+        return scenicName;
+    }
+
+    public void setScenicName(String scenicName) {
+        this.scenicName = scenicName;
+    }
+
+    public String getScenicLocation() {
+        return scenicLocation;
+    }
+
+    public void setScenicLocation(String scenicLocation) {
+        this.scenicLocation = scenicLocation;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public Integer getSalesCount() {
+        return salesCount;
+    }
+
+    public void setSalesCount(Integer salesCount) {
+        this.salesCount = salesCount;
     }
 }

@@ -29,12 +29,14 @@ public interface TicketMapper {
 
     List<Ticket> selectPage(@Param("ticketName") String ticketName,
                             @Param("ticketType") String ticketType,
+                            @Param("priceRange") String priceRange,
                             @Param("scenicId") Integer scenicId,
                             @Param("offset") Integer offset,
                             @Param("size") Integer size);
 
     Long count(@Param("ticketName") String ticketName,
                @Param("ticketType") String ticketType,
+               @Param("priceRange") String priceRange,
                @Param("scenicId") Integer scenicId);
 
     @Select("SELECT * FROM `ticket` WHERE scenic_id = #{scenicId}")
@@ -45,4 +47,5 @@ public interface TicketMapper {
 
     @Update("UPDATE `ticket` SET stock = stock + #{quantity} WHERE id = #{id}")
     int updateStock(@Param("id") Integer id, @Param("quantity") Integer quantity);
+
 }

@@ -2,36 +2,75 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.springboot.mapper.TicketMapper">
 
-<select id="selectPage" resultType="com.example.springboot.entity.Ticket">
-    SELECT * FROM `ticket`
-    <where>
-        <if test="ticketName != null and ticketName != ''">
-            AND ticket_name LIKE CONCAT('%', #{ticketName}, '%')
-        </if>
-        <if test="ticketType != null and ticketType != ''">
-            AND ticket_type = #{ticketType}
-        </if>
-        <if test="scenicId != null">
-            AND scenic_id = #{scenicId}
-        </if>
-    </where>
-    ORDER BY create_time DESC
-    LIMIT #{offset}, #{size}
-</select>
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM `ticket` t
+        LEFT JOIN `scenic_spot` s ON t.scenic_id = s.id
+        <where>
+            <if test="ticketName != null and ticketName != ''">
+                AND t.ticket_name LIKE CONCAT('%', #{ticketName}, '%')
+            </if>
+            <if test="ticketType != null and ticketType != ''">
+                AND t.ticket_type = #{ticketType}
+            </if>
+            <if test="priceRange != null and priceRange != ''">
+                <choose>
+                    <when test="priceRange == '0-100'">
+                        AND t.price BETWEEN 0 AND 100
+                    </when>
+                    <when test="priceRange == '100-200'">
+                        AND t.price BETWEEN 100 AND 200
+                    </when>
+                    <when test="priceRange == '200-500'">
+                        AND t.price BETWEEN 200 AND 500
+                    </when>
+                    <when test="priceRange == '500+'">
+                        AND t.price > 500
+                    </when>
+                </choose>
+            </if>
+            <if test="scenicId != null">
+                AND t.scenic_id = #{scenicId}
+            </if>
+        </where>
+    </select>
 
-<select id="count" resultType="java.lang.Long">
-    SELECT COUNT(*) FROM `ticket`
-    <where>
-        <if test="ticketName != null and ticketName != ''">
-            AND ticket_name LIKE CONCAT('%', #{ticketName}, '%')
-        </if>
-        <if test="ticketType != null and ticketType != ''">
-            AND ticket_type = #{ticketType}
-        </if>
-        <if test="scenicId != null">
-            AND scenic_id = #{scenicId}
-        </if>
-    </where>
-</select>
+
+
+    <select id="selectPage" resultType="com.example.springboot.entity.Ticket">
+        SELECT t.*, s.name as scenicName, s.location as scenicLocation, s.image_url as coverImage,
+        (SELECT COUNT(*) FROM `order` o WHERE o.ticket_id = t.id AND o.status = '已完成') as salesCount
+        FROM `ticket` t
+        LEFT JOIN `scenic_spot` s ON t.scenic_id = s.id
+        <where>
+            <if test="ticketName != null and ticketName != ''">
+                AND t.ticket_name LIKE CONCAT('%', #{ticketName}, '%')
+            </if>
+            <if test="ticketType != null and ticketType != ''">
+                AND t.ticket_type = #{ticketType}
+            </if>
+            <if test="priceRange != null and priceRange != ''">
+                <choose>
+                    <when test="priceRange == '0-100'">
+                        AND t.price BETWEEN 0 AND 100
+                    </when>
+                    <when test="priceRange == '100-200'">
+                        AND t.price BETWEEN 100 AND 200
+                    </when>
+                    <when test="priceRange == '200-500'">
+                        AND t.price BETWEEN 200 AND 500
+                    </when>
+                    <when test="priceRange == '500+'">
+                        AND t.price > 500
+                    </when>
+                </choose>
+            </if>
+            <if test="scenicId != null">
+                AND t.scenic_id = #{scenicId}
+            </if>
+        </where>
+        ORDER BY t.create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
 
 </mapper>
