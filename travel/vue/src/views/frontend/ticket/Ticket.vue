@@ -308,9 +308,9 @@ onMounted(() => {
   background: #f8f9fa;
 }
 
-/* 页面头部 - 橙色渐变背景 */
+/* 页面头部 - 蓝色渐变背景 */
 .page-banner {
-  background: linear-gradient(to right, #f97316, #ea580c);
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
   color: white;
   padding: 48px 0;
 }
@@ -382,12 +382,12 @@ onMounted(() => {
     transition: all 0.3s;
 
     &:hover {
-      border-color: #f97316;
+      border-color: #4A90E2;
     }
 
     &.is-focus {
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      border-color: #4A90E2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
     }
   }
 }
@@ -398,9 +398,9 @@ onMounted(() => {
 }
 
 .search-button {
-  width: 70%;
-  height: 32px;
-  background: linear-gradient(to right, #f97316, #ea580c);
+  width: 100%;
+  height: 36px;
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
   border: none;
   border-radius: 12px;
   font-size: 16px;
@@ -408,7 +408,7 @@ onMounted(() => {
   transition: all 0.3s;
 
   &:hover {
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
     transform: translateY(-1px);
   }
 }
@@ -428,7 +428,7 @@ onMounted(() => {
   gap: 12px;
 
   i {
-    color: #f97316;
+    color: #4A90E2;
   }
 }
 
@@ -620,11 +620,11 @@ onMounted(() => {
     border: 2px solid #e5e7eb;
 
     &:hover {
-      border-color: #f97316;
+      border-color: #4A90E2;
     }
 
     &.is-focus {
-      border-color: #f97316;
+      border-color: #4A90E2;
     }
   }
 }
@@ -730,7 +730,7 @@ onMounted(() => {
   margin: 0 0 12px;
 
   i {
-    color: #f97316;
+    color: #4A90E2;
     margin-right: 4px;
   }
 }
@@ -774,12 +774,12 @@ onMounted(() => {
 .price-value {
   font-size: 24px;
   font-weight: 700;
-  color: #f97316;
+  color: #4A90E2;
 }
 
 .book-button {
   padding: 8px 16px;
-  background: #f97316;
+  background: #4A90E2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -789,7 +789,7 @@ onMounted(() => {
   transition: all 0.3s;
 
   &:hover {
-    background: #ea580c;
+    background: #357ABD;
   }
 }
 
@@ -812,13 +812,13 @@ onMounted(() => {
       transition: all 0.3s;
 
       &:hover {
-        border-color: #f97316;
-        color: #f97316;
+        border-color: #4A90E2;
+        color: #4A90E2;
       }
 
       &.is-active {
-        background: #f97316;
-        border-color: #f97316;
+        background: #4A90E2;
+        border-color: #4A90E2;
         color: white;
       }
     }
