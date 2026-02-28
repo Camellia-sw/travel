@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springboot.mapper.ScenicCollectionMapper">
+    <resultMap id="ScenicCollectionResult" type="com.example.springboot.entity.ScenicCollection">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="scenicId" column="scenic_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectPage" resultMap="ScenicCollectionResult">
+        SELECT * FROM scenic_collection
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="scenicId != null">
+                AND scenic_id = #{scenicId}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM scenic_collection
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="scenicId != null">
+                AND scenic_id = #{scenicId}
+            </if>
+        </where>
+    </select>
+</mapper>

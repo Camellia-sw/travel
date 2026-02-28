@@ -39,15 +39,13 @@
               </div>
             </div>
 
-            <button class="apply-filter-btn" @click="handleSearch">
-              应用筛选
-            </button>
+
           </div>
         </aside>
 
         <!-- 主内容区 -->
         <main class="main-content">
-          <!-- 搜索和排序 -->
+          <!-- 搜索和重置 -->
           <div class="search-bar-card">
             <div class="search-bar-content">
               <div class="search-input-wrapper">
@@ -60,14 +58,13 @@
                 />
                 <i class="fas fa-search search-icon"></i>
               </div>
-              <div class="sort-wrapper">
-                <span class="sort-label">排序:</span>
-                <select class="sort-select" v-model="searchForm.sortBy" @change="handleSearch">
-                  <option value="">综合推荐</option>
-                  <option value="price_asc">价格从低到高</option>
-                  <option value="price_desc">价格从高到低</option>
-                  <option value="create_time_desc">最新发布</option>
-                </select>
+              <div class="search-actions">
+                <button class="search-btn" @click="handleSearch">
+                  <i class="fas fa-search"></i> 搜索
+                </button>
+                <button class="reset-btn" @click="resetSearch">
+                  <i class="fas fa-redo"></i> 重置
+                </button>
               </div>
             </div>
           </div>
@@ -160,8 +157,7 @@ const total = ref(0)
 const searchForm = reactive({
   name: '',
   location: '',
-  categoryId: null,
-  sortBy: '' // 排序方式
+  categoryId: null
 })
 const collectionStatus = ref({}) // 收藏状态映射
 
@@ -187,7 +183,6 @@ const fetchScenicSpots = async () => {
       name: searchForm.name,
       location: searchForm.location,
       categoryId: searchForm.categoryId,
-      sortBy: searchForm.sortBy,
       currentPage: currentPage.value,
       size: pageSize.value
     }, {
@@ -279,7 +274,6 @@ const resetSearch = () => {
   searchForm.name = ''
   searchForm.location = ''
   searchForm.categoryId = null // 重置分类ID
-  searchForm.sortBy = '' // 重置排序
   currentPage.value = 1
   fetchScenicSpots()
 }
@@ -550,23 +544,7 @@ $color-gray-900: #111827;
   }
 }
 
-.apply-filter-btn {
-  width: 100%;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
-  &:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-}
 
 /* ========== 主内容区 ========== */
 .main-content {
@@ -623,33 +601,53 @@ $color-gray-900: #111827;
   font-size: 16px;
 }
 
-.sort-wrapper {
+.search-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
-.sort-label {
-  font-size: 14px;
-  color: $color-gray-600;
-  white-space: nowrap;
-}
-
-.sort-select {
-  padding: 12px 16px;
+.search-btn,
+.reset-btn {
+  padding: 12px 20px;
   border: 2px solid $color-gray-200;
   border-radius: 16px;
   font-size: 14px;
-  outline: none;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
 
   &:hover {
     border-color: $color-primary;
   }
 
   &:focus {
+    outline: none;
     border-color: $color-primary;
+  }
+}
+
+.search-btn {
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
+  color: white;
+  border-color: $color-primary;
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.reset-btn {
+  background: white;
+  color: $color-gray-700;
+
+  &:hover {
+    background: $color-gray-50;
   }
 }
 

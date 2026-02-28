@@ -13,11 +13,11 @@
 
             <!-- 导航菜单 -->
             <div class="navbar-menu">
-              <router-link to="/" class="nav-link" active-class="active">首页</router-link>
-              <router-link to="/scenic" class="nav-link" active-class="active">景点</router-link>
-              <router-link to="/tickets" class="nav-link" active-class="active">门票</router-link>
-              <router-link to="/accommodation" class="nav-link" active-class="active">住宿</router-link>
-              <router-link to="/guide" class="nav-link" active-class="active">攻略</router-link>
+              <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">首页</router-link>
+              <router-link to="/scenic" class="nav-link" :class="{ active: $route.path.startsWith('/scenic') }">景点</router-link>
+              <router-link to="/tickets" class="nav-link" :class="{ active: $route.path.startsWith('/tickets') }">门票</router-link>
+              <router-link to="/accommodation" class="nav-link" :class="{ active: $route.path.startsWith('/accommodation') }">住宿</router-link>
+              <router-link to="/guide" class="nav-link" :class="{ active: $route.path.startsWith('/guide') }">攻略</router-link>
             </div>
           </div>
 
