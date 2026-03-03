@@ -18,12 +18,12 @@ public class AccommodationService {
     @Resource
     private AccommodationMapper accommodationMapper;
 
-    public PageResult<Accommodation> getPage(String name, Integer scenicId, String type, Integer currentPage, Integer size) {
-        logger.info("分页查询住宿列表, 当前页: {}, 每页条数: {}", currentPage, size);
+    public PageResult<Accommodation> getPage(String name, Integer scenicId, String type, Integer minPrice, Integer maxPrice, Integer minRating, String sortBy, Integer currentPage, Integer size) {
+        logger.info("分页查询住宿列表, 当前页: {}, 每页条数: {}, 价格区间: {}-{}, 最低评分: {}, 排序: {}", currentPage, size, minPrice, maxPrice, minRating, sortBy);
         try {
             int offset = (currentPage - 1) * size;
-            List<Accommodation> records = accommodationMapper.selectPage(name, scenicId, type, offset, size);
-            Long total = accommodationMapper.count(name, scenicId, type);
+            List<Accommodation> records = accommodationMapper.selectPage(name, scenicId, type, minPrice, maxPrice, minRating, sortBy, offset, size);
+            Long total = accommodationMapper.count(name, scenicId, type, minPrice, maxPrice, minRating);
             logger.info("查询成功, 总条数: {}", total);
             return new PageResult<>(records, total, currentPage, size);
         } catch (Exception e) {

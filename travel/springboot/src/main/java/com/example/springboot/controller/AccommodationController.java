@@ -23,9 +23,13 @@ public class AccommodationController {
     public Result<?> getPage(@RequestParam(required = false) String name,
                              @RequestParam(required = false) Integer scenicId,
                              @RequestParam(required = false) String type,
+                             @RequestParam(required = false) Integer minPrice,
+                             @RequestParam(required = false) Integer maxPrice,
+                             @RequestParam(required = false) Integer minRating,
+                             @RequestParam(required = false) String sortBy,
                              @RequestParam(defaultValue = "1") Integer currentPage,
                              @RequestParam(defaultValue = "10") Integer size) {
-        PageResult<Accommodation> pageResult = accommodationService.getPage(name, scenicId, type, currentPage, size);
+        PageResult<Accommodation> pageResult = accommodationService.getPage(name, scenicId, type, minPrice, maxPrice, minRating, sortBy, currentPage, size);
         return Result.success(pageResult);
     }
 

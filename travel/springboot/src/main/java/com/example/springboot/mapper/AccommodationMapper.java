@@ -30,12 +30,19 @@ public interface AccommodationMapper {
     List<Accommodation> selectPage(@Param("name") String name,
                                    @Param("scenicId") Integer scenicId,
                                    @Param("type") String type,
+                                   @Param("minPrice") Integer minPrice,
+                                   @Param("maxPrice") Integer maxPrice,
+                                   @Param("minRating") Integer minRating,
+                                   @Param("sortBy") String sortBy,
                                    @Param("offset") Integer offset,
                                    @Param("size") Integer size);
 
     Long count(@Param("name") String name,
                @Param("scenicId") Integer scenicId,
-               @Param("type") String type);
+               @Param("type") String type,
+               @Param("minPrice") Integer minPrice,
+               @Param("maxPrice") Integer maxPrice,
+               @Param("minRating") Integer minRating);
 
     @Select("SELECT DISTINCT type FROM `accommodation` WHERE type IS NOT NULL AND type != ''")
     List<String> selectTypes();
