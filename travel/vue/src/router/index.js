@@ -15,6 +15,7 @@ const frontendRoutes = [
             {path: 'scenic/:id', name: 'ScenicDetail', component: () => import('@/views/frontend/scenic/ScenicDetail.vue'), meta: { title: '景点详情' }},
             {path: 'scenic/category/:categoryId', name: 'ScenicByCategory', component: () => import('@/views/frontend/scenic/ScenicList.vue'), props: true, meta: { title: '分类景点' }},
             {path: 'tickets', name: 'Tickets', component: () => import('@/views/frontend/ticket/Ticket.vue'), meta: { title: '门票预订' }},
+            {path: 'ticket/booking/:id', name: 'TicketBooking', component: () => import('@/views/frontend/ticket/Booking.vue'), meta: { title: '预订门票', requiresAuth: true }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},
