@@ -76,6 +76,7 @@
                     v-for="type in typeOptions"
                     :key="type"
                     class="filter-option"
+                    :class="{active: selectedTypes.includes(type)}"
                 >
                   <input
                       type="checkbox"
@@ -96,6 +97,7 @@
                     v-for="star in [5, 4, 3]"
                     :key="star"
                     class="filter-option"
+                    :class="{active: selectedStars.includes(star)}"
                 >
                   <input
                       type="checkbox"
@@ -110,8 +112,6 @@
                 </label>
               </div>
             </div>
-
-            <button class="btn-apply-filter" @click="handleSearch">应用筛选</button>
           </div>
         </aside>
 
@@ -428,15 +428,27 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+/* SCSS变量定义 */
+$color-primary: #4A90E2;
+$color-secondary: #357ABD;
+$color-gray-50: #f9fafb;
+$color-gray-100: #f3f4f6;
+$color-gray-200: #e5e7eb;
+$color-gray-300: #d1d5db;
+$color-gray-600: #4b5563;
+$color-gray-700: #374151;
+$color-gray-800: #1f2937;
+$color-gray-900: #111827;
+
 .accommodation-page {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: $color-gray-50;
   overflow: visible;
 }
 
 /* 页面头部横幅 */
 .page-banner {
-  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   color: white;
   padding: 48px 0;
 }
@@ -499,7 +511,7 @@ onMounted(() => {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #4b5563;
+  color: $color-gray-600;
   margin-bottom: 4px;
 }
 
@@ -511,7 +523,7 @@ onMounted(() => {
 .btn-search {
   width: 100%;
   padding: 10px 24px;
-  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -525,7 +537,7 @@ onMounted(() => {
   gap: 8px;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
     transform: translateY(-1px);
   }
 }
@@ -563,7 +575,7 @@ onMounted(() => {
   }
 
   &::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: $color-gray-100;
     border-radius: 3px;
   }
 
@@ -586,7 +598,7 @@ onMounted(() => {
   gap: 8px;
 
   i {
-    color: #9333ea;
+    color: $color-primary;
   }
 }
 
@@ -597,7 +609,7 @@ onMounted(() => {
 .filter-title {
   font-size: 14px;
   font-weight: 600;
-  color: #4b5563;
+  color: $color-gray-600;
   margin: 0 0 12px;
 }
 
@@ -616,20 +628,24 @@ onMounted(() => {
   transition: background 0.2s ease;
 
   &:hover {
-    background: #f9fafb;
+    background: $color-gray-100;
+  }
+
+  &.active {
+    background-color: rgba(74, 144, 226, 0.1);
   }
 
   input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: #9333ea;
+    accent-color: $color-primary;
     cursor: pointer;
   }
 
   span {
     margin-left: 8px;
     font-size: 14px;
-    color: #4b5563;
+    color: $color-gray-600;
   }
 }
 
@@ -645,25 +661,8 @@ onMounted(() => {
 
   .star-text {
     margin-left: 4px;
-    color: #4b5563;
+    color: $color-gray-600;
     font-size: 14px;
-  }
-}
-
-.btn-apply-filter {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
   }
 }
 
@@ -682,12 +681,12 @@ onMounted(() => {
 
 .result-count {
   font-size: 14px;
-  color: #6b7280;
+  color: $color-gray-600;
 }
 
 .count-number {
   font-weight: 600;
-  color: #111827;
+  color: $color-gray-900;
 }
 
 .sort-options {
@@ -698,7 +697,7 @@ onMounted(() => {
 
 .sort-label {
   font-size: 14px;
-  color: #6b7280;
+  color: $color-gray-600;
 }
 
 .sort-select {
@@ -739,7 +738,7 @@ onMounted(() => {
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 12px 0 0 12px;
-  background: #f3f4f6;
+  background: $color-gray-100;
 
   img {
     width: 100%;
@@ -773,7 +772,7 @@ onMounted(() => {
 .item-title {
   font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: $color-gray-900;
   margin: 0;
 }
 
@@ -789,7 +788,7 @@ onMounted(() => {
 
 .item-badge {
   padding: 4px 12px;
-  background: #dc2626;
+  background: $color-primary;
   color: white;
   border-radius: 9999px;
   font-size: 12px;
@@ -798,20 +797,20 @@ onMounted(() => {
 
 .item-location {
   font-size: 14px;
-  color: #6b7280;
+  color: $color-gray-600;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 6px;
 
   i {
-    color: #9333ea;
+    color: $color-primary;
   }
 }
 
 .item-description {
   font-size: 14px;
-  color: #4b5563;
+  color: $color-gray-700;
   line-height: 1.6;
   margin: 0;
   display: -webkit-box;
@@ -840,7 +839,7 @@ onMounted(() => {
   gap: 4px;
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
+  color: $color-gray-900;
 
   i {
     color: #fbbf24;
@@ -849,7 +848,7 @@ onMounted(() => {
 
 .rating-count {
   font-size: 14px;
-  color: #6b7280;
+  color: $color-gray-600;
 }
 
 .item-price-section {
@@ -865,19 +864,19 @@ onMounted(() => {
 .price-value {
   font-size: 20px;
   font-weight: 700;
-  color: #9333ea;
+  color: $color-primary;
   margin-bottom: 8px;
 }
 
 .price-unit {
   font-size: 14px;
   font-weight: 400;
-  color: #6b7280;
+  color: $color-gray-600;
 }
 
 .btn-detail {
   padding: 8px 16px;
-  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -888,7 +887,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
   }
 }
 
@@ -914,19 +913,19 @@ onMounted(() => {
 .empty-title {
   font-size: 20px;
   font-weight: 700;
-  color: #111827;
+  color: $color-gray-900;
   margin: 0 0 8px;
 }
 
 .empty-desc {
   font-size: 14px;
-  color: #6b7280;
+  color: $color-gray-600;
   margin: 0 0 24px;
 }
 
 .btn-reset {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%);
+  background: linear-gradient(135deg, $color-primary 0%, $color-secondary 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -936,7 +935,7 @@ onMounted(() => {
   transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
   }
 }
 
@@ -954,13 +953,13 @@ onMounted(() => {
       transition: all 0.3s ease;
 
       &:hover {
-        background: #9333ea;
+        background: $color-primary;
         color: white;
       }
     }
 
     .el-pager li.is-active {
-      background: #9333ea;
+      background: $color-primary;
       color: white;
     }
   }
