@@ -18,6 +18,7 @@ const frontendRoutes = [
             {path: 'ticket/booking/:id', name: 'TicketBooking', component: () => import('@/views/frontend/ticket/Booking.vue'), meta: { title: '预订门票', requiresAuth: true }},
             {path: 'accommodation', name: 'AccommodationList', component: () => import('@/views/frontend/accommodation/AccommodationList.vue'), meta: { title: '周边住宿' }},
             {path: 'accommodation/:id', name: 'AccommodationDetail', component: () => import('@/views/frontend/accommodation/AccommodationDetail.vue'), meta: { title: '住宿详情' }},
+            {path: 'guide', name: 'GuideList', component: () => import('@/views/frontend/guide/GuideList.vue'), meta: { title: '攻略列表' }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},
