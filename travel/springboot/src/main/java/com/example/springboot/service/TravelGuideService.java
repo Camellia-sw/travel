@@ -41,6 +41,7 @@ public class TravelGuideService {
                 if (user != null) {
                     guide.setUserInfo(user);
                     guide.setUsername(user.getUsername());
+                    guide.setAvatar(user.getAvatar());
                 }
             }
             logger.info("获取攻略成功，攻略ID: {}", id);
@@ -131,6 +132,7 @@ public class TravelGuideService {
                     if (user != null) {
                         guide.setUserInfo(user);
                         guide.setUsername(user.getUsername());
+                        guide.setAvatar(user.getAvatar());
                     }
                 }
             }

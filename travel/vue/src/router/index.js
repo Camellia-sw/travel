@@ -19,6 +19,7 @@ const frontendRoutes = [
             {path: 'accommodation', name: 'AccommodationList', component: () => import('@/views/frontend/accommodation/AccommodationList.vue'), meta: { title: '周边住宿' }},
             {path: 'accommodation/:id', name: 'AccommodationDetail', component: () => import('@/views/frontend/accommodation/AccommodationDetail.vue'), meta: { title: '住宿详情' }},
             {path: 'guide', name: 'GuideList', component: () => import('@/views/frontend/guide/GuideList.vue'), meta: { title: '攻略列表' }},
+            {path: 'guide/detail/:id', name: 'GuideDetail', component: () => import('@/views/frontend/guide/GuideDetail.vue'), meta: { title: '攻略详情' }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},

@@ -87,7 +87,7 @@
               <div class="guide-meta">
                   <span class="meta-item">
                     <i class="fas fa-user"></i>
-                    {{ item.userNickname || '旅行者' + item.userId }}
+                    {{ item.username || '旅行者' + item.userId }}
                   </span>
                 <span class="meta-item">
                     <i class="fas fa-calendar"></i>
