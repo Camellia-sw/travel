@@ -21,6 +21,7 @@ const frontendRoutes = [
             {path: 'guide', name: 'GuideList', component: () => import('@/views/frontend/guide/GuideList.vue'), meta: { title: '攻略列表' }},
             {path: 'guide/detail/:id', name: 'GuideDetail', component: () => import('@/views/frontend/guide/GuideDetail.vue'), meta: { title: '攻略详情' }},
             {path: 'guide/edit', name: 'GuideEdit', component: () => import('@/views/frontend/guide/GuideEdit.vue'), meta: { title: '发布攻略', requiresAuth: true }},
+            {path: 'my-guide', name: 'MyGuideList', component: () => import('@/views/frontend/guide/MyGuideList.vue'), meta: { title: '我的攻略', requiresAuth: true }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},
