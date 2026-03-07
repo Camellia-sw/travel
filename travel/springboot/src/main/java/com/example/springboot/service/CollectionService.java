@@ -95,13 +95,22 @@ public class CollectionService {
         try {
             int offset = (currentPage - 1) * size;
             List<Collection> records = collectionMapper.selectByUserId(currentUser.getId(), offset, size);
-            // 填充攻略信息
+            // 填充攻略信息和用户信息
             for (Collection collection : records) {
                 if (collection.getGuideId() != null) {
                     TravelGuide guide = travelGuideMapper.selectById(collection.getGuideId());
                     if (guide != null) {
                         collection.setGuideTitle(guide.getTitle());
                         collection.setGuideCoverImage(guide.getCoverImage());
+                        collection.setGuideViews(guide.getViews());
+
+                        // 获取攻略作者信息
+                        if (guide.getUserId() != null) {
+                            User author = userMapper.selectById(guide.getUserId());
+                            if (author != null) {
+                                collection.setUsername(author.getUsername());
+                            }
+                        }
                     }
                 }
             }

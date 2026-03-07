@@ -4,8 +4,10 @@ import jakarta.annotation.Resource;
 
 import com.example.springboot.common.PageResult;
 import com.example.springboot.entity.ScenicCollection;
+import com.example.springboot.entity.ScenicSpot;
 import com.example.springboot.exception.ServiceException;
 import com.example.springboot.mapper.ScenicCollectionMapper;
+import com.example.springboot.mapper.ScenicSpotMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class ScenicCollectionService {
 
     @Resource
     private ScenicCollectionMapper scenicCollectionMapper;
+
+    @Resource
+    private ScenicSpotMapper scenicSpotMapper;
 
     public ScenicCollection addCollection(ScenicCollection collection) {
         logger.info("开始添加景点收藏，用户ID: {}, 景点ID: {}", collection.getUserId(), collection.getScenicId());
@@ -103,6 +108,17 @@ public class ScenicCollectionService {
         try {
             int offset = (currentPage - 1) * size;
             List<ScenicCollection> records = scenicCollectionMapper.selectPage(userId, scenicId, offset, size);
+
+            // 填充景点详细信息
+            for (ScenicCollection collection : records) {
+                if (collection.getScenicId() != null) {
+                    ScenicSpot scenicSpot = scenicSpotMapper.selectById(collection.getScenicId());
+                    if (scenicSpot != null) {
+                        collection.setScenicInfo(scenicSpot);
+                    }
+                }
+            }
+
             Long total = scenicCollectionMapper.count(userId, scenicId);
             logger.info("查询成功, 总条数: {}", total);
             return new PageResult<>(records, total, currentPage, size);

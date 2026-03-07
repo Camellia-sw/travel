@@ -11,6 +11,9 @@ public class ScenicCollection {
     private Integer scenicId;
     private Date createTime;
 
+    // 景点详细信息
+    private ScenicSpot scenicInfo;
+
     // Getters and Setters
     public Integer getId() {
         return id;
@@ -42,5 +45,13 @@ public class ScenicCollection {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public ScenicSpot getScenicInfo() {
+        return scenicInfo;
+    }
+
+    public void setScenicInfo(ScenicSpot scenicInfo) {
+        this.scenicInfo = scenicInfo;
     }
 }

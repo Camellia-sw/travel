@@ -123,4 +123,19 @@ public class ScenicCollectionController {
         scenicCollectionService.removeCollection(currentUser.getId(), scenicId);
         return Result.success("移除收藏成功");
     }
+
+    @Operation(summary = "获取当前用户的景点收藏列表")
+    @GetMapping("/user")
+    public Result<?> getCurrentUserCollections(
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(defaultValue = "12") Integer size) {
+        // 从JWT令牌中获取当前登录用户
+        User currentUser = JwtTokenUtils.getCurrentUser();
+        if (currentUser == null) {
+            return Result.error("请先登录");
+        }
+
+        PageResult<ScenicCollection> pageResult = scenicCollectionService.getPage(currentUser.getId(), null, currentPage, size);
+        return Result.success(pageResult);
+    }
 }
