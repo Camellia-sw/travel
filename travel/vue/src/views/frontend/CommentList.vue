@@ -145,15 +145,15 @@ const likeComment = async (item) => {
   }
 
   try {
-    await request.put(`/comment/like/${item.id}`, null, {
+    const url = item.liked ? `/comment/unlike/${item.id}` : `/comment/like/${item.id}`
+    await request.put(url, null, {
       showDefaultMsg: false,
-      onSuccess: (isLiked) => {
-        if (isLiked) {
-          item.liked = true
+      onSuccess: () => {
+        item.liked = !item.liked
+        if (item.liked) {
           item.likes = (item.likes || 0) + 1
           ElMessage.success('点赞成功')
         } else {
-          item.liked = false
           item.likes = Math.max(0, (item.likes || 0) - 1)
           ElMessage.success('取消点赞成功')
         }

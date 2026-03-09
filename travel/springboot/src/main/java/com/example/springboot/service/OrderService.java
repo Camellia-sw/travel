@@ -247,6 +247,13 @@ public class OrderService {
             if (order == null) {
                 throw new ServiceException("订单不存在");
             }
+            // 填充门票名称
+            if (order.getTicketId() != null) {
+                Ticket ticket = ticketMapper.selectById(order.getTicketId());
+                if (ticket != null) {
+                    order.setTicketName(ticket.getTicketName());
+                }
+            }
             logger.info("获取订单成功，订单ID: {}", id);
             return order;
         } catch (ServiceException e) {

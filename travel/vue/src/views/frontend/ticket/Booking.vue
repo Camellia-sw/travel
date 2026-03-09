@@ -404,6 +404,9 @@
           <template v-if="paymentMethod === 'ALIPAY'">
             <el-button type="primary" @click="goToAlipay" :icon="Right">去支付</el-button>
           </template>
+          <template v-else-if="paymentMethod === 'WECHAT'">
+            <el-button type="primary" @click="goToWechatPay" :icon="Right">去支付</el-button>
+          </template>
           <template v-else>
             <el-button type="primary" @click="confirmPayment" :icon="Check">确认已支付</el-button>
           </template>
@@ -603,6 +606,14 @@ const goToAlipay = () => {
   }
 }
 
+// 跳转到微信支付页面
+const goToWechatPay = () => {
+  if (createdOrder.value && createdOrder.value.id) {
+    router.push(`/payment/wechat/${createdOrder.value.id}`)
+  } else {
+    ElMessage.error('订单信息错误')
+  }
+}
 // 取消订单
 const cancelOrder = async () => {
   loading.value = true

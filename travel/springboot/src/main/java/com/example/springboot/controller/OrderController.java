@@ -19,7 +19,7 @@ public class OrderController {
     private OrderService orderService;
 
     @Operation(summary = "创建订单")
-    @PostMapping("/add")
+    @PostMapping("")
     public Result<?> createOrder(@RequestBody Order order) {
         User currentUser = JwtTokenUtils.getCurrentUser();
         if (currentUser == null) {
