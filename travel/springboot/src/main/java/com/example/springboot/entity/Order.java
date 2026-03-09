@@ -38,14 +38,11 @@ public class Order {
     /** 订单总金额 */
     private BigDecimal totalAmount;
 
-    /** 状态: 0-待支付, 1-已支付, 2-已取消, 3-已退款, 4-已完成 */
+    /** 状态: 0-待支付, 1-已支付, 2-已取消, 3-已退款*/
     private Integer status;
 
     /** 支付时间 */
     private LocalDateTime paymentTime;
-
-    /** 支付方式 */
-    private String paymentMethod;
 
     /** 创建时间 */
     private LocalDateTime createTime;
@@ -152,14 +149,6 @@ public class Order {
 
     public void setPaymentTime(LocalDateTime paymentTime) {
         this.paymentTime = paymentTime;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public LocalDateTime getCreateTime() {

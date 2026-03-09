@@ -94,7 +94,7 @@
             <!-- 价格和操作 -->
             <div class="order-actions">
               <div class="price-section">
-                <div class="price-amount" :class="{ 'price-gray': order.status === 4 }">
+                <div class="price-amount">
                   ¥{{ order.totalAmount }}
                 </div>
               </div>
@@ -106,6 +106,15 @@
                   </button>
                   <button class="btn btn-secondary" @click="cancelOrder(order.id)">
                     取消订单
+                  </button>
+                </template>
+                <!-- 已支付状态 -->
+                <template v-else-if="order.status === 1">
+                  <button class="btn btn-primary" @click="viewOrderDetail(order.id)">
+                    查看详情
+                  </button>
+                  <button class="btn btn-warning" @click="refundOrder(order)">
+                    申请退款
                   </button>
                 </template>
                 <!-- 其他状态 -->
@@ -148,40 +157,12 @@
           <p><strong>数量:</strong> {{ currentOrder.quantity }}</p>
           <p><strong>总金额:</strong> <span class="amount">¥{{ currentOrder.totalAmount }}</span></p>
         </div>
-        <div class="payment-methods">
-          <h4>请选择支付方式</h4>
-          <el-radio-group v-model="paymentMethod">
-            <el-radio label="WECHAT">微信支付</el-radio>
-            <el-radio label="ALIPAY">支付宝</el-radio>
-            <el-radio label="BANK_CARD">银行卡</el-radio>
-          </el-radio-group>
-        </div>
-        <div class="payment-info" v-if="paymentMethod">
-          <template v-if="paymentMethod === 'ALIPAY'">
-            <p class="payment-tip">点击下方"去支付"按钮，跳转到支付宝支付页面</p>
-          </template>
-          <template v-else>
-            <p class="qrcode-tip">请扫描二维码完成支付</p>
-            <div class="qrcode-image">
-              <!-- 这里放二维码图片，实际项目中可能需要后端生成 -->
-              <el-image
-                  style="width: 200px; height: 200px"
-                  :src="require('@/assets/payment-qrcode.png')"
-                  fit="cover"
-              ></el-image>
-            </div>
-          </template>
-        </div>
+
       </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="payDialogVisible = false">取消</el-button>
-          <template v-if="paymentMethod === 'ALIPAY'">
-            <el-button type="primary" @click="goToAlipay">去支付</el-button>
-          </template>
-          <template v-else>
-            <el-button type="primary" @click="confirmPayment">确认已支付</el-button>
-          </template>
+          <el-button type="primary" @click="goToAlipay">去支付</el-button>
         </span>
       </template>
     </el-dialog>
@@ -214,9 +195,6 @@
           <el-descriptions-item label="支付时间" v-if="currentOrder.paymentTime">
             {{ formatTime(currentOrder.paymentTime) }}
           </el-descriptions-item>
-          <el-descriptions-item label="支付方式" v-if="currentOrder.paymentMethod">
-            {{ getPaymentMethodText(currentOrder.paymentMethod) }}
-          </el-descriptions-item>
         </el-descriptions>
       </div>
     </el-dialog>
@@ -246,15 +224,15 @@ const activeTab = ref('all')
 const payDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const currentOrder = ref(null)
-const paymentMethod = ref('')
+
 
 // 状态标签配置
 const statusTabs = [
   { label: '全部订单', value: 'all' },
   { label: '待支付', value: '0' },
-  { label: '待使用', value: '1' },
-  { label: '已完成', value: '4' },
-  { label: '已取消', value: '2' }
+  { label: '已支付', value: '1' },
+  { label: '已取消', value: '2' },
+  { label: '已退款', value: '3' }
 ]
 
 // 获取状态样式类
@@ -263,8 +241,7 @@ const getStatusClass = (status) => {
     0: 'status-pending',
     1: 'status-paid',
     2: 'status-cancelled',
-    3: 'status-refunded',
-    4: 'status-completed'
+    3: 'status-refunded'
   }
   return statusMap[status] || 'status-default'
 }
@@ -275,8 +252,7 @@ const getHeaderClass = (status) => {
     0: 'header-pending',
     1: 'header-paid',
     2: 'header-cancelled',
-    3: 'header-refunded',
-    4: 'header-completed'
+    3: 'header-refunded'
   }
   return headerMap[status] || ''
 }
@@ -287,8 +263,7 @@ const getStatusIcon = (status) => {
     0: 'fas fa-clock',
     1: 'fas fa-check-circle',
     2: 'fas fa-times-circle',
-    3: 'fas fa-undo',
-    4: 'fas fa-check-circle'
+    3: 'fas fa-undo'
   }
   return iconMap[status] || 'fas fa-info-circle'
 }
@@ -344,19 +319,8 @@ const getOrderStatusText = (status) => {
     1: '已支付',
     2: '已取消',
     3: '已退款',
-    4: '已完成'
   }
   return statusMap[status] || '未知状态'
-}
-
-// 获取支付方式文本
-const getPaymentMethodText = (method) => {
-  const methodMap = {
-    'WECHAT': '微信支付',
-    'ALIPAY': '支付宝',
-    'BANK_CARD': '银行卡'
-  }
-  return methodMap[method] || '未知方式'
 }
 
 // 格式化日期
@@ -380,17 +344,11 @@ const payOrder = (order) => {
     return
   }
   currentOrder.value = order
-  paymentMethod.value = '' // 重置支付方式选择
   payDialogVisible.value = true
 }
 
 // 确认支付
 const confirmPayment = async () => {
-  if (!paymentMethod.value) {
-    ElMessage.warning('请选择支付方式')
-    return
-  }
-
   if (!currentOrder.value || !currentOrder.value.id) {
     ElMessage.error('订单数据无效')
     payDialogVisible.value = false
@@ -400,9 +358,6 @@ const confirmPayment = async () => {
   loading.value = true
   try {
     await request.post(`/order/${currentOrder.value.id}/pay`, null, {
-      params: {
-        paymentMethod: paymentMethod.value
-      },
       successMsg: '支付成功',
       onSuccess: () => {
         payDialogVisible.value = false
@@ -420,7 +375,8 @@ const confirmPayment = async () => {
 const goToAlipay = () => {
   if (currentOrder.value && currentOrder.value.id) {
     payDialogVisible.value = false;
-    router.push(`/payment/alipay/${currentOrder.value.id}`)
+    // 直接跳转到后端支付接口，后端会返回支付宝支付表单
+    window.open(`http://localhost:8080/pay/alipay/${currentOrder.value.id}`);
   } else {
     ElMessage.error('订单信息错误')
   }
@@ -443,6 +399,42 @@ const cancelOrder = async (orderId) => {
       })
     } catch (error) {
       console.error('取消订单失败:', error)
+    } finally {
+      loading.value = false
+    }
+  }).catch(() => {})
+}
+
+// 退款订单
+const refundOrder = async (order) => {
+  if (!order || !order.id) {
+    ElMessage.error('订单数据无效')
+    return
+  }
+
+  ElMessageBox.confirm(
+      `确定要申请退款吗？\n订单金额: ¥${order.totalAmount}`,
+      '申请退款',
+      {
+        confirmButtonText: '确定退款',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+  ).then(async () => {
+    loading.value = true
+    try {
+      await request.post(`/pay/refund/${order.id}`, null, {
+        params: {
+          refundAmount: order.totalAmount
+        },
+        successMsg: '退款申请已提交',
+        onSuccess: () => {
+          fetchOrders()  // 重新加载订单列表
+        }
+      })
+    } catch (error) {
+      console.error('退款申请失败:', error)
+      ElMessage.error('退款申请失败，请稍后重试')
     } finally {
       loading.value = false
     }
@@ -806,6 +798,15 @@ onMounted(() => {
               color: #667eea;
             }
           }
+        }
+      }
+      &.btn-warning {
+        background: #f59e0b;
+        color: white;
+        border: none;
+
+        &:hover {
+          background: #d97706;
         }
       }
     }

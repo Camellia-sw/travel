@@ -19,7 +19,7 @@ public interface OrderMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Order order);
 
-    @Update("UPDATE `order` SET status = #{status}, payment_time = #{paymentTime}, payment_method = #{paymentMethod} WHERE id = #{id}")
+    @Update("UPDATE `order` SET status = #{status}, payment_time = #{paymentTime} WHERE id = #{id}")
     int updateStatus(Order order);
 
     @Update("UPDATE `order` SET status = #{status} WHERE id = #{id}")

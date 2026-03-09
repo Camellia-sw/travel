@@ -32,8 +32,8 @@ public class OrderController {
 
     @Operation(summary = "支付订单")
     @PostMapping("/{id}/pay")
-    public Result<?> payOrder(@PathVariable Integer id, @RequestParam String paymentMethod) {
-        orderService.payOrder(id, paymentMethod);
+    public Result<?> payOrder(@PathVariable Integer id) {
+        orderService.payOrder(id);
         return Result.success("支付成功");
     }
 

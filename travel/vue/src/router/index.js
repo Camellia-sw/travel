@@ -24,8 +24,8 @@ const frontendRoutes = [
             {path: 'my-guide', name: 'MyGuideList', component: () => import('@/views/frontend/guide/MyGuideList.vue'), meta: { title: '我的攻略', requiresAuth: true }},
             {path: 'collection', name: 'Collection', component: () => import('@/views/frontend/MyCollection.vue'), meta: { title: '我的收藏', requiresAuth: true }},
             {path: 'orders', name: 'Orders', component: () => import('@/views/frontend/MyOrders.vue'), meta: { title: '我的订单', requiresAuth: true }},
-            {path: 'payment/alipay/:orderId', name: 'AlipayPayment', component: () => import('@/views/frontend/payment/AlipayPayment.vue'), meta: { title: '支付宝支付', requiresAuth: true }},
-            {path: 'payment/wechat/:orderId', name: 'WechatPayment', component: () => import('@/views/frontend/payment/WechatPayment.vue'), meta: { title: '微信支付', requiresAuth: true }},
+            // {path: 'payment/alipay/:orderId', name: 'AlipayPayment', component: () => import('@/views/frontend/payment/AlipayPayment.vue'), meta: { title: '支付宝支付', requiresAuth: true }},
+            // {path: 'payment/wechat/:orderId', name: 'WechatPayment', component: () => import('@/views/frontend/payment/WechatPayment.vue'), meta: { title: '微信支付', requiresAuth: true }},
         ]
     },
     {path: '/login', name: 'Login', component: () => import('@/views/auth/Login.vue'), meta: { title: '登录' }},

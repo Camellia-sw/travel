@@ -278,7 +278,7 @@
 
               <div class="payment-support">
                 <i class="fa fa-shield-alt"></i>
-                支持支付宝、微信支付
+                支持支付宝支付
               </div>
 
 
@@ -346,70 +346,12 @@
             </div>
           </div>
         </div>
-
-        <div class="payment-methods">
-          <div class="payment-header">
-            <el-icon><Wallet /></el-icon>
-            <span>支付方式</span>
-          </div>
-
-          <el-radio-group v-model="paymentMethod" class="payment-options">
-            <el-radio label="WECHAT">
-              <div class="payment-option">
-                <el-icon class="payment-icon wechat-icon"><Money /></el-icon>
-                <span>微信支付</span>
-              </div>
-            </el-radio>
-            <el-radio label="ALIPAY">
-              <div class="payment-option">
-                <el-icon class="payment-icon alipay-icon"><Money /></el-icon>
-                <span>支付宝</span>
-              </div>
-            </el-radio>
-            <el-radio label="BANK_CARD">
-              <div class="payment-option">
-                <el-icon class="payment-icon bank-icon"><CreditCard /></el-icon>
-                <span>银行卡</span>
-              </div>
-            </el-radio>
-          </el-radio-group>
-        </div>
-
-        <div class="payment-info" v-if="paymentMethod">
-          <template v-if="paymentMethod === 'ALIPAY'">
-            <div class="payment-tip">
-              <el-icon><InfoFilled /></el-icon>
-              <span>点击下方"去支付"按钮，跳转到支付宝支付页面</span>
-            </div>
-          </template>
-          <template v-else>
-            <div class="qrcode-tip">
-              <el-icon><InfoFilled /></el-icon>
-              <span>请扫描二维码完成支付</span>
-            </div>
-            <div class="qrcode-image">
-              <el-image
-                  style="width: 200px; height: 200px"
-                  :src="qrcodePlaceholder"
-                  fit="cover"
-              ></el-image>
-            </div>
-          </template>
-        </div>
       </div>
 
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="cancelOrder" :icon="Close">取消订单</el-button>
-          <template v-if="paymentMethod === 'ALIPAY'">
-            <el-button type="primary" @click="goToAlipay" :icon="Right">去支付</el-button>
-          </template>
-          <template v-else-if="paymentMethod === 'WECHAT'">
-            <el-button type="primary" @click="goToWechatPay" :icon="Right">去支付</el-button>
-          </template>
-          <template v-else>
-            <el-button type="primary" @click="confirmPayment" :icon="Check">确认已支付</el-button>
-          </template>
+          <el-button type="primary" @click="goToAlipay" :icon="Right">去支付</el-button>
         </span>
       </template>
     </el-dialog>
@@ -429,9 +371,7 @@ import {
   Edit,
   User,
   Phone,
-  CreditCard,
   Back,
-  Check,
   Close,
   Right,
   Wallet,
@@ -455,7 +395,6 @@ const bookingFormRef = ref(null)
 
 // 支付对话框
 const payDialogVisible = ref(false)
-const paymentMethod = ref('')
 const createdOrder = ref({})
 
 // 预订表单数据
@@ -573,17 +512,9 @@ const submitBooking = async () => {
 
 // 确认支付
 const confirmPayment = async () => {
-  if (!paymentMethod.value) {
-    ElMessage.warning('请选择支付方式')
-    return
-  }
-
   loading.value = true
   try {
     await request.post(`/order/${createdOrder.value.id}/pay`, null, {
-      params: {
-        paymentMethod: paymentMethod.value
-      },
       successMsg: '支付成功',
       onSuccess: () => {
         payDialogVisible.value = false
@@ -600,20 +531,16 @@ const confirmPayment = async () => {
 // 跳转到支付宝支付页面
 const goToAlipay = () => {
   if (createdOrder.value && createdOrder.value.id) {
-    router.push(`/payment/alipay/${createdOrder.value.id}`)
+    // // 直接跳转到后端支付接口，后端会返回支付宝支付表单
+    // window.open(`http://localhost:8080/pay/alipay/${createdOrder.value.id}`);
+    // 在当前窗口跳转到后端支付接口，后端会返回支付宝支付表单
+    window.location.href = `http://localhost:8080/pay/alipay/${createdOrder.value.id}`;
   } else {
     ElMessage.error('订单信息错误')
   }
 }
 
-// 跳转到微信支付页面
-const goToWechatPay = () => {
-  if (createdOrder.value && createdOrder.value.id) {
-    router.push(`/payment/wechat/${createdOrder.value.id}`)
-  } else {
-    ElMessage.error('订单信息错误')
-  }
-}
+
 // 取消订单
 const cancelOrder = async () => {
   loading.value = true
@@ -644,11 +571,7 @@ const formatDate = (dateStr) => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
-// 二维码占位图（模拟支付二维码）
-const qrcodePlaceholder = computed(() => {
-  // 生成一个简单的二维码占位图URL
-  return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBzdHlsZT0iZmlsbDojZjBmMGYwO3N0cm9rZS13aWR0aDo0O3N0cm9rZTojZGRkIiAvPjxyZWN0IHg9IjcwIiB5PSI3MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBzdHlsZT0iZmlsbDojZjhmOGY4O3N0cm9rZS13aWR0aDoyO3N0cm9rZTojY2NjIiAvPjx0ZXh0IHg9IjEwMCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBzdHlsZT0iZm9udC1mYW1pbHk6QXJpYWwsIHNhbnMtc2VyaWY7Zm9udC1zaXplOjEycHg7ZmlsbDojOTk5OTk5OyI+5pSv5LuY5LqM57u056CBPC90ZXh0Pjwvc3ZnPg=='
-})
+
 
 // 页面加载时获取门票详情
 onMounted(() => {
@@ -1386,16 +1309,8 @@ onMounted(() => {
           .payment-icon {
             font-size: 18px;
 
-            &.wechat-icon {
-              color: #07c160;
-            }
-
             &.alipay-icon {
               color: #1677ff;
-            }
-
-            &.bank-icon {
-              color: #667eea;
             }
           }
         }

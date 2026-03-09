@@ -7,7 +7,7 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.example.springboot.config.PayConfig;
+import com.example.springboot.config.AliPayConfig;
 import com.example.springboot.entity.Order;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -24,11 +24,11 @@ import java.util.UUID;
  * 支持支付宝和微信支付
  */
 @Service
-public class PayService {
-    private static final Logger logger = LoggerFactory.getLogger(PayService.class);
+public class AliPayService {
+    private static final Logger logger = LoggerFactory.getLogger(AliPayService.class);
 
     @Resource
-    private PayConfig payConfig;
+    private AliPayConfig aliPayConfig;
 
     @Resource
     private OrderService orderService;
@@ -41,13 +41,13 @@ public class PayService {
     private void initAliPayClient() {
         if (alipayClient == null) {
             alipayClient = new DefaultAlipayClient(
-                    payConfig.getAliPay().getGatewayUrl(),
-                    payConfig.getAliPay().getAppId(),
-                    payConfig.getAliPay().getMerchantPrivateKey(),
+                    aliPayConfig.getGatewayUrl(),
+                    aliPayConfig.getAppId(),
+                    aliPayConfig.getAppPrivateKey(),
                     "json",
-                    payConfig.getAliPay().getCharset(),
-                    payConfig.getAliPay().getAlipayPublicKey(),
-                    payConfig.getAliPay().getSignType()
+                    aliPayConfig.getCharset(),
+                    aliPayConfig.getAlipayPublicKey(),
+                    aliPayConfig.getSignType()
             );
         }
     }
@@ -62,10 +62,10 @@ public class PayService {
         logger.info("支付宝支付，订单ID: {}", order.getId());
 
         // 检查支付宝配置是否完整
-        if (payConfig.getAliPay().getAppId() == null ||
-                payConfig.getAliPay().getAppId().isEmpty() ||
-                payConfig.getAliPay().getMerchantPrivateKey() == null ||
-                payConfig.getAliPay().getMerchantPrivateKey().isEmpty()) {
+        if (aliPayConfig.getAppId() == null ||
+                aliPayConfig.getAppId().isEmpty() ||
+                aliPayConfig.getAppPrivateKey() == null ||
+                aliPayConfig.getAppPrivateKey().isEmpty()) {
             logger.warn("支付宝配置不完整，使用模拟支付");
             // 返回模拟支付表单
             Map<String, String> result = new HashMap<>();
@@ -86,12 +86,23 @@ public class PayService {
             return result;
         }
 
+        // 打印支付宝配置信息（仅用于调试）
+        logger.info("支付宝配置：AppId={}, GatewayUrl={}",
+                aliPayConfig.getAppId(),
+                aliPayConfig.getGatewayUrl());
+
+        // 检查订单信息
+        if (order.getTicketName() == null) {
+            order.setTicketName("门票订单");
+            logger.warn("订单缺少门票名称，使用默认值");
+        }
+
         initAliPayClient();
 
         // 创建支付宝支付请求
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
-        request.setNotifyUrl(payConfig.getAliPay().getNotifyUrl());
-        request.setReturnUrl(payConfig.getAliPay().getReturnUrl());
+        request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        request.setReturnUrl(aliPayConfig.getReturnUrl());
 
         // 构建请求参数
         Map<String, Object> bizContent = new HashMap<>();
@@ -120,28 +131,7 @@ public class PayService {
         }
     }
 
-    /**
-     * 微信支付
-     * @param order 订单信息
-     * @return 微信支付参数
-     */
-    public Map<String, String> weChatPay(Order order) {
-        logger.info("微信支付，订单ID: {}", order.getId());
 
-        // 微信支付简化实现，返回模拟数据
-        // 实际项目中需要集成微信支付SDK
-        Map<String, String> result = new HashMap<>();
-        result.put("prepayId", "wx" + System.currentTimeMillis());
-        result.put("orderNo", order.getOrderNo());
-        result.put("appId", payConfig.getWeChatPay().getAppId());
-        result.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
-        result.put("nonceStr", UUID.randomUUID().toString().replace("-", ""));
-        result.put("package", "prepay_id=" + result.get("prepayId"));
-        result.put("signType", "RSA");
-        result.put("paySign", "mock_sign");
-
-        return result;
-    }
 
     /**
      * 处理支付宝回调
@@ -153,9 +143,9 @@ public class PayService {
         try {
             // 验证签名
             boolean signVerified = AlipaySignature.rsaCheckV1(params,
-                    payConfig.getAliPay().getAlipayPublicKey(),
-                    payConfig.getAliPay().getCharset(),
-                    payConfig.getAliPay().getSignType());
+                    aliPayConfig.getAlipayPublicKey(),
+                    aliPayConfig.getCharset(),
+                    aliPayConfig.getSignType());
             if (!signVerified) {
                 logger.error("支付宝回调签名验证失败");
                 return false;
@@ -168,7 +158,7 @@ public class PayService {
                 // 更新订单状态
                 Order order = orderService.getByOrderNo(orderNo);
                 if (order != null && order.getStatus() == 0) {
-                    orderService.payOrder(order.getId(), "支付宝");
+                    orderService.payOrder(order.getId());
                 }
                 return true;
             }
@@ -179,22 +169,7 @@ public class PayService {
         }
     }
 
-    /**
-     * 处理微信支付回调
-     * @param body 回调数据
-     * @return 处理结果
-     */
-    public boolean handleWeChatPayCallback(String body) {
-        logger.info("处理微信支付回调");
-        try {
-            // 微信支付回调简化处理
-            // 实际项目中需要解析XML/JSON并验证签名
-            return true;
-        } catch (Exception e) {
-            logger.error("处理微信支付回调失败", e);
-            return false;
-        }
-    }
+
 
     /**
      * 关闭订单
@@ -234,10 +209,6 @@ public class PayService {
                 request.setBizContent(cn.hutool.json.JSONUtil.toJsonStr(bizContent));
                 AlipayTradeRefundResponse response = alipayClient.execute(request);
                 return response.isSuccess();
-            } else if ("微信支付".equals(paymentMethod)) {
-                // 微信支付退款简化实现
-                logger.info("微信支付退款，订单号: {}, 金额: {}", orderNo, refundAmount);
-                return true;
             }
             return false;
         } catch (Exception e) {

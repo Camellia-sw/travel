@@ -39,7 +39,7 @@
 
     <select id="selectPage" resultType="com.example.springboot.entity.Ticket">
         SELECT t.*, s.name as scenicName, s.location as scenicLocation, s.image_url as coverImage,
-        (SELECT COUNT(*) FROM `order` o WHERE o.ticket_id = t.id AND o.status = '已完成') as salesCount
+        (SELECT COUNT(*) FROM `order` o WHERE o.ticket_id = t.id AND o.status = 1) as salesCount
         FROM `ticket` t
         LEFT JOIN `scenic_spot` s ON t.scenic_id = s.id
         <where>

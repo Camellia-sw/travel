@@ -75,8 +75,8 @@ public class OrderService {
     }
 
     @Transactional
-    public void payOrder(Integer id, String paymentMethod) {
-        logger.info("支付订单，订单ID: {}, 支付方式: {}", id, paymentMethod);
+    public void payOrder(Integer id) {
+        logger.info("支付订单，订单ID: {}", id);
         try {
             Order order = orderMapper.selectById(id);
             if (order == null) {
@@ -88,7 +88,6 @@ public class OrderService {
 
             order.setStatus(1);
             order.setPaymentTime(LocalDateTime.now());
-            order.setPaymentMethod(paymentMethod);
 
             int result = orderMapper.updateStatus(order);
             if (result <= 0) {
@@ -263,6 +262,8 @@ public class OrderService {
             throw new ServiceException("获取订单失败，请稍后重试");
         }
     }
+
+    public Order selectByOrderNo(String orderNo) {return orderMapper.selectByOrderNo(orderNo);}
 
     public Order getByOrderNo(String orderNo) {
         logger.info("根据订单号获取订单，订单号: {}", orderNo);
